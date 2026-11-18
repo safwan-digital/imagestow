@@ -32,7 +32,8 @@ function icon(name, size) {
   return '<svg width="' + (size || 30) + '" height="' + (size || 30) + '" viewBox="0 0 24 24" fill="none" stroke="var(--accent3)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || ICONS["img-arrow"]) + "</svg>";
 }
 
-function head(o) {
+function head(o, pfx) {
+  const P = pfx == null ? "../" : pfx;
   const ld = o.ld ? '<script type="application/ld+json">' + JSON.stringify(o.ld) + "</script>" : "";
   return `<!doctype html>
 <html lang="en" data-theme="light">
@@ -54,28 +55,34 @@ function head(o) {
 <meta name="twitter:title" content="${o.title}">
 <meta name="twitter:description" content="${o.meta}">
 <meta name="twitter:image" content="${BASE}/og-image.png">
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="stylesheet" href="/styles.css">
+<link rel="icon" href="${P}favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="${P}favicon-32.png">
+<link rel="apple-touch-icon" href="${P}apple-touch-icon.png">
+<link rel="stylesheet" href="${P}styles.css">
 <script>try{var _t=localStorage.getItem('imagestow-theme');if(_t==='dark'||(_t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.dataset.theme='dark'}catch(e){}</script>
 <!-- Analytics placeholder: ImageStow has NO analytics property yet. When Safwan creates one, add its tags here and update /privacy/. Do NOT reuse PDFStow's GA/GTM/Clarity IDs. -->
 ${ld}
 </head>`;
 }
-const HEADER = `<header class="site"><div class="wrap">
-<a class="logo" href="/"><img src="/icon-192.png" alt="" width="34" height="34">Image<span class="stow">Stow</span></a>
-<nav><a href="/#tools">All tools</a><a href="/compress-image/">Compress</a><a href="/heic-to-jpg/">HEIC to JPG</a><a href="/about/">About</a><a href="/privacy/">Privacy</a>
+function header(P) {
+  const home = P === "" ? "./" : P;
+  return `<header class="site"><div class="wrap">
+<a class="logo" href="${home}"><img src="${P}icon-192.png" alt="" width="34" height="34">Image<span class="stow">Stow</span></a>
+<nav><a href="${P}#tools">All tools</a><a href="${P}compress-image/">Compress</a><a href="${P}heic-to-jpg/">HEIC to JPG</a><a href="${P}about/">About</a><a href="${P}privacy/">Privacy</a>
 <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode">☾ Dark</button></nav>
 </div></header>`;
-const FOOTER = `<footer class="site"><div class="wrap">
-<nav><a href="/">All tools</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/contact/">Contact</a><a href="https://pdfstow.safwan.digital/">PDFStow — free PDF tools</a></nav>
+}
+function footer(P) {
+  const home = P === "" ? "./" : P;
+  return `<footer class="site"><div class="wrap">
+<nav><a href="${home}">All tools</a><a href="${P}about/">About</a><a href="${P}privacy/">Privacy</a><a href="${P}terms/">Terms</a><a href="${P}contact/">Contact</a><a href="https://pdfstow.safwan.digital/">PDFStow — free PDF tools</a></nav>
 <div><strong>ImageStow</strong> — free image tools, private by design. Your files are processed in your browser and never uploaded.</div>
 <div>Built by <a href="https://safwan.digital">Safwan.Digital</a></div>
 </div></footer>
-<script src="/tools-data.js"></script>
-<script src="/app.js"></script>
+<script src="${P}tools-data.js"></script>
+<script src="${P}app.js"></script>
 </body></html>`;
+}
 
 function qualityCtl(def) {
   return `<div class="ctl"><label for="quality">Quality: <span class="val" id="qualityVal">${def}%</span></label><input type="range" id="quality" min="10" max="100" value="${def}"></div>`;
@@ -147,6 +154,7 @@ const CONTROLS = {
 const CANVAS_UI = new Set(["editor", "crop", "rotate", "blur", "picker"]);
 
 function toolPage(t) {
+  const HPFX = "../";
   const url = BASE + "/" + t.slug + "/";
   const ld = [
     { "@context": "https://schema.org", "@type": "SoftwareApplication", name: t.name + " — ImageStow", url, applicationCategory: "MultimediaApplication", operatingSystem: "Any (web browser)", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, description: t.meta, publisher: { "@type": "Organization", name: "Safwan.Digital", url: "https://safwan.digital" } },
@@ -157,9 +165,9 @@ function toolPage(t) {
     ? '<canvas id="stage" aria-label="Your image — work area"></canvas>'
     : t.ui === "bulk" || t.ui === "pdf" ? '<div class="thumbs" id="thumbs"></div>'
     : '<img id="previewImg" alt="Preview of your image">';
-  return head({ title: t.title, meta: t.meta, url, ld, cspEval: t.slug === "heic-to-jpg" }) + `
+  return head({ title: t.title, meta: t.meta, url, ld, cspEval: t.slug === "heic-to-jpg" }, "../") + `
 <body data-tool="${t.slug}">
-${HEADER}
+${header(HPFX)}
 <main>
 <div class="tool-head"><span class="pill">Free · No sign-up · Nothing uploaded</span>
 <h1>${t.name}</h1><p>${t.answer}</p></div>
@@ -180,23 +188,24 @@ ${HEADER}
 <h2>Questions</h2><div class="faq">
 ${t.faqs.map(f => "<details><summary>" + f[0] + "</summary><p>" + f[1] + "</p></details>").join("\n")}
 </div>
-<h2>Related tools</h2><div class="related">${t.related.map(s => '<a href="/' + s + '/">' + bySlug[s].name + "</a>").join("")}</div>
+<h2>Related tools</h2><div class="related">${t.related.map(s => '<a href="../' + s + '/">' + bySlug[s].name + "</a>").join("")}</div>
 </section>
 </main>
-${FOOTER}`;
+${footer(HPFX)}`;
 }
 
 function homePage() {
+  const HPFX = "";
   const url = BASE + "/";
   const ld = [{ "@context": "https://schema.org", "@type": "WebApplication", name: "ImageStow", url, applicationCategory: "MultimediaApplication", operatingSystem: "Any (web browser)", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, description: "Free image tools — compress, resize, convert and edit images right in your browser. Private by design: files never leave your device. No sign-up.", publisher: { "@type": "Organization", name: "Safwan.Digital", url: "https://safwan.digital" } }];
   const sections = CATS.map(c => {
     const cards = TOOLS.filter(t => t.cat === c.id).map(t =>
-      `<a class="card" data-slug="${t.slug}" href="/${t.slug}/"><span class="ic">${icon(t.icon)}</span><h3>${t.name}</h3><p>${t.desc}</p></a>`).join("\n");
+      `<a class="card" data-slug="${t.slug}" href="${t.slug}/"><span class="ic">${icon(t.icon)}</span><h3>${t.name}</h3><p>${t.desc}</p></a>`).join("\n");
     return `<section class="cat" id="cat-${c.id}"><h2>${c.name}</h2><p>${c.blurb}</p><div class="grid">${cards}</div></section>`;
   }).join("\n");
-  return head({ title: "ImageStow — Free Image Tools, Private by Design", meta: "Free image tools — compress, resize, convert, edit and clean images right in your browser. Private by design: files never leave your device. No sign-up.", url, ld }) + `
+  return head({ title: "ImageStow — Free Image Tools, Private by Design", meta: "Free image tools — compress, resize, convert, edit and clean images right in your browser. Private by design: files never leave your device. No sign-up.", url, ld }, "") + `
 <body>
-${HEADER}
+${header(HPFX)}
 <main>
 <div class="hero"><span class="pill">Free · No sign-up · Nothing uploaded</span>
 <h1>Image tools that keep<br>your photos <em>yours.</em></h1>
@@ -208,19 +217,20 @@ ${sections}
 <section class="copy" style="margin-left:0;padding-left:0"><h2>Why your photos stay private here</h2>
 <p>Most free image sites make you upload your photo to their server before they will touch it. ImageStow does the work inside your browser instead — the same technology that shows you this page also compresses and converts your images. Close the tab and nothing remains. There is no account, no upload queue and no copy of your picture anywhere but your device.</p>
 <h2>The most-loved tools</h2>
-<p><a href="/compress-to-size/">Compress to a Target Size</a> gets a photo under the 200 KB limit that forms and portals demand. <a href="/heic-to-jpg/">HEIC to JPG</a> opens iPhone photos anywhere. <a href="/remove-metadata/">Remove Photo Metadata</a> strips the hidden location data most people never knew their photos carried. And when a job needs a PDF instead, our sister site <a href="https://pdfstow.safwan.digital/">PDFStow</a> does it the same private way.</p></section>
+<p><a href="compress-to-size/">Compress to a Target Size</a> gets a photo under the 200 KB limit that forms and portals demand. <a href="heic-to-jpg/">HEIC to JPG</a> opens iPhone photos anywhere. <a href="remove-metadata/">Remove Photo Metadata</a> strips the hidden location data most people never knew their photos carried. And when a job needs a PDF instead, our sister site <a href="https://pdfstow.safwan.digital/">PDFStow</a> does it the same private way.</p></section>
 </div>
 </main>
-${FOOTER}`;
+${footer(HPFX)}`;
 }
 
 function prosePage(slug, title, meta, h1, bodyHtml) {
+  const HPFX = "../";
   const url = BASE + "/" + slug + "/";
-  return head({ title, meta, url }) + `
+  return head({ title, meta, url }, "../") + `
 <body>
-${HEADER}
+${header(HPFX)}
 <main><div class="prose"><h1>${h1}</h1>${bodyHtml}</div></main>
-${FOOTER}`;
+${footer(HPFX)}`;
 }
 
 function write(rel, content) {
@@ -266,13 +276,13 @@ write("contact/index.html", prosePage("contact", "Contact — ImageStow", "Conta
 <p>Tell us which tool you used and what happened, and we will take a look. Please do not email us your images — the tools run in your browser precisely so your files never have to travel.</p>
 <p>ImageStow is built by <a href="https://safwan.digital">Safwan.Digital</a>.</p>`));
 
-write("404.html", head({ title: "Page not found — ImageStow", meta: "That page does not exist. Browse all free ImageStow tools instead.", url: BASE + "/404.html" }) + `
-<body>${HEADER}<main><div class="prose"><h1>That page is not here</h1><p>The link may be old or mistyped. <a href="/">See all the image tools</a> instead.</p></div></main>${FOOTER}`);
+write("404.html", head({ title: "Page not found — ImageStow", meta: "That page does not exist. Browse all free ImageStow tools instead.", url: BASE + "/404.html" }, "/") + `
+<body>${header("/")}<main><div class="prose"><h1>That page is not here</h1><p>The link may be old or mistyped. <a href="/">See all the image tools</a> instead.</p></div></main>${footer("/")}`);
 
 const urls = ["/", ...TOOLS.map(t => "/" + t.slug + "/"), "/privacy/", "/about/", "/terms/", "/contact/"];
 write("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` + urls.map(u => `<url><loc>${BASE}${u}</loc></url>`).join("\n") + "\n</urlset>\n");
 write("robots.txt", `User-agent: *\nAllow: /\nSitemap: ${BASE}/sitemap.xml\n`);
 write("llms.txt", `# ImageStow — Free Image Tools, Private by Design\n\n> Free image tools that run 100% in the browser: files are never uploaded, no sign-up. Built by Safwan.Digital. Sister site: PDFStow (PDF tools, same rule).\n\n## Tools\n` + TOOLS.map(t => `- [${t.name}](${BASE}/${t.slug}/): ${t.desc}`).join("\n") + `\n\n## Pages\n- [About](${BASE}/about/)\n- [Privacy](${BASE}/privacy/)\n- [Terms](${BASE}/terms/)\n- [Contact](${BASE}/contact/)\n`);
-write("manifest.json", JSON.stringify({ name: "ImageStow — Free Image Tools", short_name: "ImageStow", description: "Free image tools in your browser. Private by design.", start_url: "/", display: "standalone", background_color: "#070d1a", theme_color: "#1A365D", icons: [{ src: "/icon-192.png", sizes: "192x192", type: "image/png" }, { src: "/icon-512.png", sizes: "512x512", type: "image/png" }] }, null, 2));
+write("manifest.json", JSON.stringify({ name: "ImageStow — Free Image Tools", short_name: "ImageStow", description: "Free image tools in your browser. Private by design.", start_url: ".", scope: ".", display: "standalone", background_color: "#070d1a", theme_color: "#1A365D", icons: [{ src: "icon-192.png", sizes: "192x192", type: "image/png" }, { src: "icon-512.png", sizes: "512x512", type: "image/png" }] }, null, 2));
 write("tools-data.js", "window.ISTOOLS = " + JSON.stringify(TOOLS.map(t => ({ slug: t.slug, name: t.name, cat: t.cat, desc: t.desc, keys: t.keys }))) + ";\n");
 console.log("DONE:", TOOLS.length, "tools,", urls.length, "sitemap URLs");

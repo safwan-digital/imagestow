@@ -1160,7 +1160,9 @@ function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<":
     if (box) {
       if (!q) { box.classList.add("hidden"); box.innerHTML = ""; return; }
       const hits = window.ISTOOLS.filter(t => matches(t, q)).slice(0, 6);
-      box.innerHTML = hits.length ? hits.map(t => '<a href="/' + t.slug + '/">' + t.name + "</a>").join("") : '<div class="none">No tool matches that yet. Try “compress”, “resize” or “convert”.</div>';
+      const appScript = document.querySelector('script[src*="app.js"]');
+      const base = appScript ? (appScript.getAttribute("src") || "").replace(/app\.js(?:\?.*)?$/, "") : "";
+      box.innerHTML = hits.length ? hits.map(t => '<a href="' + base + t.slug + '/">' + t.name + "</a>").join("") : '<div class="none">No tool matches that yet. Try “compress”, “resize” or “convert”.</div>';
       box.classList.remove("hidden");
     }
   });

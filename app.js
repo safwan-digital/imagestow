@@ -31,8 +31,8 @@ function fmtBytes(n) {
   return (n / (1024 * 1024)).toFixed(2).replace(/\.00$/, "") + " MB";
 }
 function extOf(name) { const m = /\.([a-z0-9]+)$/i.exec(name || ""); return m ? m[1].toLowerCase() : ""; }
-function baseOf(name) { return (name || "image").replace(/\.[a-z0-9]+$/i, "").replace(/[^a-z0-9-_]+/gi, "-").replace(/^-+|-+$/g, "") || "image"; }
-function outName(file, suffix, ext) { return "imagestow-" + baseOf(file && file.name) + (suffix ? "-" + suffix : "") + "." + ext; }
+function baseOf(name) { const b = (name || "image").replace(/\.[a-z0-9]+$/i, "").replace(/[^a-z0-9-_]+/gi, "-").replace(/^-+|-+$/g, "").slice(0, 100).replace(/-+$/g, ""); return b || "image"; }
+function outName(file, suffix, ext) { return "imagestow-" + baseOf(file && file.name) + (suffix ? "-" + baseOf(suffix) : "") + "." + ext; }
 function mimeExt(mime) { return { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" }[mime] || "png"; }
 function loadScriptOnce(src) {
   return new Promise((res, rej) => {
@@ -43,6 +43,7 @@ function loadScriptOnce(src) {
     }
     const s = document.createElement("script");
     s.src = src; s.onload = () => res(); s.onerror = () => rej(new Error("Could not load a needed library. Check your connection and try again."));
+    if (SRI[src]) { s.integrity = SRI[src]; s.crossOrigin = "anonymous"; }
     document.head.appendChild(s);
   });
   function scriptReady(src) {
@@ -57,13 +58,19 @@ const CDN = {
   pdf: "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js",
   zip: "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"
 };
+/* Subresource Integrity hashes (sha384) for the pinned CDN files above — verified against the live files 2026-11-18. */
+const SRI = {
+  "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js": "sha384-OTofQ0MEeiSgh62havBcemCIK0gqj809wX6UA0uPISNMRnR6NZyCdGzX3SbLrgwL",
+  "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js": "sha384-weMABwrltA6jWR8DDe9Jp5blk+tZQh7ugpCsF3JwSA53WZM9/14PjS5LAJNHNjAI",
+  "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js": "sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG"
+};
 
 /* ---------- image engine ---------- */
 function loadImage(src) {
   return new Promise((res, rej) => {
     const img = new Image();
     img.onload = () => res(img);
-    img.onerror = () => rej(new Error("That file could not be read as an image."));
+    img.onerror = () => rej(new Error("That file could not be read as an image. Try a different image file."));
     img.src = src;
   });
 }
@@ -270,7 +277,7 @@ const state = { files: [], img: null, url: null, extra: {} };
 function showError(msg) {
   const r = $("#result"); if (!r) return;
   r.classList.remove("hidden");
-  r.innerHTML = '<p class="err">' + msg + "</p>";
+  r.innerHTML = '<p class="err" role="alert">' + msg + "</p>";
 }
 function resultBox(html) {
   const r = $("#result");
@@ -292,7 +299,7 @@ function wireShell(onFiles) {
   if (!input) return;
   const pick = files => {
     const list = Array.from(files || []).filter(f => f && (f.type.startsWith("image/") || /\.(jpe?g|png|webp|gif|bmp|avif|heic|heif|svg)$/i.test(f.name)));
-    if (!list.length) { showError("That is not an image file. Pick a JPG, PNG, WebP, SVG or HEIC image."); return; }
+    if (!list.length) { showError("That is not an image file. Pick a JPG, PNG, WebP, GIF, SVG or HEIC image."); return; }
     state.files = list;
     state.extra = {};
     $("#workArea").classList.remove("hidden");
@@ -312,16 +319,22 @@ function wireShell(onFiles) {
 }
 async function loadPreview(file) {
   if (state.url) URL.revokeObjectURL(state.url);
-  const { img, url } = await fileToImage(file);
-  state.img = img; state.url = url;
-  const pv = $("#previewImg");
-  if (pv) pv.src = url;
-  return img;
+  try {
+    const { img, url } = await fileToImage(file);
+    state.img = img; state.url = url;
+    const pv = $("#previewImg");
+    if (pv) pv.src = url;
+    return img;
+  } catch (e) {
+    /* A file that cannot be read must not leave an empty work area with live controls behind. */
+    const w = $("#workArea"); if (w) w.classList.add("hidden");
+    throw e;
+  }
 }
 function busy(btn, on, label) {
   if (!btn) return;
-  if (on) { btn.dataset.label = btn.textContent; btn.disabled = true; btn.textContent = label || "Working…"; }
-  else { btn.disabled = false; if (btn.dataset.label) btn.textContent = btn.dataset.label; }
+  if (on) { if (!btn.dataset.label) btn.dataset.label = btn.textContent; btn.disabled = true; btn.textContent = label || "Working…"; }
+  else { btn.disabled = false; if (btn.dataset.label) { btn.textContent = btn.dataset.label; delete btn.dataset.label; } }
 }
 
 /* ---------- region selector (crop + blur) ---------- */
@@ -421,7 +434,7 @@ const IMPL = {
   "heic-to-jpg": () => {
     wireShell(async files => {
       const pv = $("#previewImg"); if (pv) pv.removeAttribute("src");
-      resultBox('<p class="note">HEIC file picked: <b>' + files[0].name + "</b> (" + fmtBytes(files[0].size) + '). Press the button to convert it.</p>');
+      resultBox('<p class="note">HEIC file picked: <b>' + escapeHtml(files[0].name) + "</b> (" + fmtBytes(files[0].size) + '). Press the button to convert it.</p>');
     });
     $("#runBtn").addEventListener("click", async e => {
       const btn = e.currentTarget;
@@ -442,7 +455,7 @@ const IMPL = {
         const r = resultBox(statsHtml([["Before", fmtBytes(state.files[0].size)], ["After (JPG)", fmtBytes(out.size)], ["Size", img.naturalWidth + " × " + img.naturalHeight]]));
         r.appendChild(dlButton(out, name));
       } catch (err) {
-        showError("We could not convert this HEIC file in your browser. It may be an unusual HEIC variant, or the HEIC reader library failed to load. Try a different photo, or convert it in your phone's Photos app first.");
+        showError("We could not convert this HEIC photo in your browser. Some HEIC photos (like Live Photos) cannot be read here, or the extra code this tool needs did not download. Check your connection and try again, try a different photo, or save the photo as JPG in your phone's Photos app first.");
       }
       busy(btn, false);
     });
@@ -459,7 +472,7 @@ const IMPL = {
         const wm = /width\s*=\s*"(\d+(?:\.\d+)?)"/.exec(svgText), hm = /height\s*=\s*"(\d+(?:\.\d+)?)"/.exec(svgText);
         if (m) { const p = m[1].trim().split(/\s+/).map(Number); vbW = p[2]; vbH = p[3]; }
         else if (wm && hm) { vbW = Number(wm[1]); vbH = Number(hm[1]); }
-        if (!vbW || !vbH) throw new Error("This SVG has no size or viewBox, so we cannot size the PNG. Add a viewBox in an SVG editor and try again.");
+        if (!vbW || !vbH) throw new Error("This SVG file does not say how big it is, so we cannot size the PNG. Open it in an SVG editor, set its size (the viewBox setting), save it and try again.");
         ratio = vbH / vbW;
         const wEl = $("#width"); if (wEl && !wEl.value) wEl.value = Math.round(vbW) || 1024;
         await loadPreview(files[0]);
@@ -561,7 +574,7 @@ const IMPL = {
         const pct = Math.max(0, Math.round((1 - blob.size / before) * 100));
         const name = outName(state.files[0], "compressed", mimeExt(outType()));
         const r = resultBox(statsHtml([["Before", fmtBytes(before)], ["After", fmtBytes(blob.size)], ["Saved", pct + "%"]]));
-        if (blob.size >= before) { const w = document.createElement("p"); w.className = "note"; w.textContent = "This copy is not smaller than the original — the original was already well compressed. Try a lower quality setting."; r.appendChild(w); }
+        if (blob.size >= before) { const w = document.createElement("p"); w.className = "note"; w.textContent = outType() === "image/png" ? "This copy is not smaller than the original. PNG has no quality setting to lower — for a smaller file, convert the image to JPG or WebP instead." : "This copy is not smaller than the original — the original was already well compressed. Try a lower quality setting."; r.appendChild(w); }
         r.appendChild(dlButton(blob, name));
       } catch (err) { showError(err.message); }
       busy(btn, false);
@@ -624,7 +637,7 @@ const IMPL = {
             lines.push(f.name + ": " + fmtBytes(f.size) + " → " + fmtBytes(b.size));
           } catch (err) { lines.push(f.name + ": skipped (could not be read)"); }
         }
-        if (!done) throw new Error("None of those images could be read.");
+        if (!done) throw new Error("None of those images could be read. Try JPG, PNG or WebP images instead.");
         busy(btn, true, "Zipping…");
         const zipBlob = await zip.generateAsync({ type: "blob" });
         const r = resultBox(statsHtml([["Images", String(done)], ["Before (total)", fmtBytes(before)], ["After (total)", fmtBytes(after)]]));
@@ -1015,7 +1028,7 @@ const IMPL = {
           ? '<p class="warn">This photo carries hidden details (see above). Press the button to get a clean copy with them removed.</p>'
           : '<p class="note">We found no camera, date or GPS details hidden in this file. You can still download a freshly made clean copy.</p>';
         resultBox(html);
-      } catch (e) { showError("We could not read that file."); }
+      } catch (e) { showError("We could not read that file. Try a different photo."); }
     });
     $("#runBtn").addEventListener("click", async e => {
       const btn = e.currentTarget;
@@ -1028,7 +1041,7 @@ const IMPL = {
         if (buf[0] === 0xFF && buf[1] === 0xD8) {
           const clean = stripJpegMetadata(buf);
           const check = parseJpegExif(clean);
-          if (check.found) throw new Error("The hidden details could not be fully removed from this file.");
+          if (check.found) throw new Error("The hidden details could not be fully removed from this file. Try a different copy of the photo.");
           blob = new Blob([clean], { type: "image/jpeg" });
           note = "Done the lossless way: the photo pixels were not touched at all — only the hidden detail blocks were cut out of the file.";
         } else {
@@ -1055,7 +1068,7 @@ const IMPL = {
         if (meta.exif && meta.exif.gpsLat != null) html += '<p class="warn">This photo reveals exactly where it was taken. Use Remove Photo Metadata before you share it.</p>';
         else if (!hasHiddenMetadata(meta)) html += '<p class="note">No hidden camera, date or GPS details were found in this file — only the basic file facts above.</p>';
         resultBox(html);
-      } catch (e) { showError("We could not read that file."); }
+      } catch (e) { showError("We could not read that file. Try a different photo."); }
     });
   },
 
@@ -1078,6 +1091,7 @@ const IMPL = {
         state.extra.favicons = blobs;
         const r = resultBox('<p class="saved">Your icons are ready.</p><div class="dl-list" id="favList"></div>');
         const list = $("#favList", r);
+        if (s < 512) { const n = document.createElement("p"); n.className = "note"; n.textContent = "Your image is " + img.naturalWidth + " × " + img.naturalHeight + " px, so the bigger icons are enlarged copies and may look soft. For crisp icons, start from an image at least 512 × 512 px."; r.appendChild(n); }
         sizes.forEach(sz => { const b = dlButton(blobs[sz], "imagestow-favicon-" + sz + ".png", "Download " + sz + " × " + sz); b.className = "btn secondary"; list.appendChild(b); });
         const zipBtn = document.createElement("button");
         zipBtn.className = "btn"; zipBtn.textContent = "Download all as ZIP";

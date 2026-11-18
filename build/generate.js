@@ -35,6 +35,9 @@ function icon(name, size) {
 function head(o, pfx) {
   const P = pfx == null ? "../" : pfx;
   const ld = o.ld ? '<script type="application/ld+json">' + JSON.stringify(o.ld) + "</script>" : "";
+  const robots = o.noindex ? '<meta name="robots" content="noindex">\n' : "";
+  const canonical = o.noCanonical ? "" : `<link rel="canonical" href="${o.url}">\n`;
+  const ogUrl = o.noCanonical ? "" : `<meta property="og:url" content="${o.url}">\n`;
   return `<!doctype html>
 <html lang="en" data-theme="light">
 <head>
@@ -42,12 +45,11 @@ function head(o, pfx) {
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'${o.cspEval ? " 'unsafe-eval' 'wasm-unsafe-eval'" : ""} https://cdn.jsdelivr.net; style-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob: https://cdn.jsdelivr.net; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>${o.title}</title>
 <meta name="description" content="${o.meta}">
-<meta name="theme-color" content="#1A365D">
-<link rel="canonical" href="${o.url}">
-<meta property="og:title" content="${o.title}">
+${robots}<meta name="theme-color" content="#1A365D">
+${canonical}<meta property="og:title" content="${o.title}">
 <meta property="og:description" content="${o.meta}">
 <meta property="og:type" content="website">
-<meta property="og:url" content="${o.url}">
+${ogUrl}
 <meta property="og:image" content="${BASE}/og-image.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="ImageStow — free online image tools that keep your files private">
@@ -67,8 +69,8 @@ ${ld}
 function header(P) {
   const home = P === "" ? "./" : P;
   return `<header class="site"><div class="wrap">
-<a class="logo" href="${home}"><img src="${P}icon-192.png" alt="" width="34" height="34">Image<span class="stow">Stow</span></a>
-<nav><a href="${P}#tools">All tools</a><a href="${P}compress-image/">Compress</a><a href="${P}heic-to-jpg/">HEIC to JPG</a><a href="${P}about/">About</a><a href="${P}privacy/">Privacy</a>
+<a class="logo" href="${home}"><img src="${P}logo-68.png" alt="" width="34" height="34">Image<span class="stow">Stow</span></a>
+<nav><a href="${P}#tools">All tools</a><a class="nav-extra" href="${P}compress-image/">Compress</a><a class="nav-extra" href="${P}heic-to-jpg/">HEIC to JPG</a><a href="${P}about/">About</a><a href="${P}privacy/">Privacy</a>
 <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode">☾ Dark</button></nav>
 </div></header>`;
 }
@@ -90,7 +92,7 @@ function qualityCtl(def) {
 const CONTROLS = {
   convert: t => (t.q ? qualityCtl(92) : "") + `<button class="btn" id="runBtn">Convert to ${t.out.split("/")[1].toUpperCase() === "JPEG" ? "JPG" : t.out.split("/")[1].toUpperCase()}</button>`,
   heic: () => qualityCtl(92) + `<button class="btn" id="runBtn">Convert to JPG</button><p class="note">The HEIC reader library loads once, only on this tool. Large photos can take a few seconds.</p>`,
-  svg: () => `<div class="ctl-row"><div class="ctl"><label for="width">PNG width (px)</label><input type="number" id="width" min="16" max="8000" placeholder="1024"></div><div class="ctl"><label>Height</label><div id="heightOut" style="min-height:46px;display:flex;align-items:center;font-weight:700">—</div></div></div>
+  svg: () => `<div class="ctl-row"><div class="ctl"><label for="width">PNG width (px)</label><input type="number" id="width" min="16" max="8000" placeholder="1024"></div><div class="ctl"><label>Height</label><div id="heightOut" class="heightout">—</div></div></div>
 <div class="ctl"><label for="bg">Background</label><select id="bg"><option value="transparent">Transparent</option><option value="white">White</option></select></div>
 <button class="btn" id="runBtn">Convert to PNG</button>`,
   pdf: () => `<div class="ctl"><label for="pageSize">Page size</label><select id="pageSize"><option value="fit">Fit each page to its image</option><option value="a4">A4 pages</option></select></div><button class="btn" id="runBtn">Make PDF</button>`,
@@ -104,7 +106,7 @@ const CONTROLS = {
 <button class="btn" id="runBtn">Compress to size</button>`,
   bulk: () => qualityCtl(80) + `<button class="btn" id="runBtn">Compress all &amp; make ZIP</button>`,
   resize: () => `<div class="ctl-row"><div class="ctl"><label for="w">Width (px)</label><input type="number" id="w" min="1"></div><div class="ctl"><label for="h">Height (px)</label><input type="number" id="h" min="1"></div></div>
-<div class="ctl-row"><div class="ctl"><label for="pct">Or scale by percent (%)</label><input type="number" id="pct" min="1" max="400" placeholder="e.g. 50"></div><label class="check" style="align-self:end;padding-bottom:12px"><input type="checkbox" id="lock" checked> Keep the same shape (lock)</label></div>
+<div class="ctl-row"><div class="ctl"><label for="pct">Or scale by percent (%)</label><input type="number" id="pct" min="1" max="400" placeholder="e.g. 50"></div><label class="check checkend"><input type="checkbox" id="lock" checked> Keep the same shape (lock)</label></div>
 <button class="btn" id="runBtn">Resize image</button>`,
   social: () => `<div class="ctl"><label for="preset">Platform size</label><select id="preset">
 <option value="1080x1080">Instagram post — square (1080 × 1080)</option>
@@ -132,7 +134,7 @@ const CONTROLS = {
 <div class="ctl"><label for="textpos">Text position</label><select id="textpos"><option value="bottom-center">Bottom centre</option><option value="top-center">Top centre</option><option value="middle-center">Middle</option><option value="bottom-left">Bottom left</option><option value="bottom-right">Bottom right</option></select></div></div>
 <button class="btn" id="runBtn">Download edited image</button>`,
   crop: () => `<p class="note">Drag on the picture to draw the box. Drag inside it to move it; drag the gold corner to resize it.</p><button class="btn" id="runBtn">Crop &amp; download</button>`,
-  rotate: () => `<div class="btn-row" style="margin-bottom:14px"><button class="btn secondary" id="rotL" type="button">⟲ Turn left</button><button class="btn secondary" id="rotR" type="button">⟳ Turn right</button><button class="btn secondary" id="flipH" type="button">Flip ↔</button><button class="btn secondary" id="flipV" type="button">Flip ↕</button></div><button class="btn" id="runBtn">Download fixed image</button>`,
+  rotate: () => `<div class="btn-row mb14"><button class="btn secondary" id="rotL" type="button">⟲ Turn left</button><button class="btn secondary" id="rotR" type="button">⟳ Turn right</button><button class="btn secondary" id="flipH" type="button">Flip ↔</button><button class="btn secondary" id="flipV" type="button">Flip ↕</button></div><button class="btn" id="runBtn">Download fixed image</button>`,
   watermark: () => `<div class="ctl"><label for="wmtext">Watermark words</label><input type="text" id="wmtext" placeholder="e.g. @yourshop or Your Name" maxlength="60"></div>
 <div class="ctl-row"><div class="ctl"><label for="wmopacity">See-through: <span class="val" id="wmopacityVal">55%</span></label><input type="range" id="wmopacity" min="10" max="100" value="55"></div>
 <div class="ctl"><label for="wmsize">Size</label><input type="range" id="wmsize" min="2" max="12" value="5"></div></div>
@@ -158,7 +160,7 @@ function toolPage(t) {
   const url = BASE + "/" + t.slug + "/";
   const ld = [
     { "@context": "https://schema.org", "@type": "SoftwareApplication", name: t.name + " — ImageStow", url, applicationCategory: "MultimediaApplication", operatingSystem: "Any (web browser)", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, description: t.meta, publisher: { "@type": "Organization", name: "Safwan.Digital", url: "https://safwan.digital" } },
-    { "@context": "https://schema.org", "@type": "HowTo", name: "How to " + t.name.toLowerCase(), step: t.steps.map((s, i) => ({ "@type": "HowToStep", position: i + 1, text: s })) },
+    { "@context": "https://schema.org", "@type": "HowTo", name: t.howto, step: t.steps.map((s, i) => ({ "@type": "HowToStep", position: i + 1, text: s })) },
     { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: t.faqs.map(f => ({ "@type": "Question", name: f[0], acceptedAnswer: { "@type": "Answer", text: f[1] } })) }
   ];
   const preview = CANVAS_UI.has(t.ui)
@@ -177,13 +179,14 @@ ${header(HPFX)}
 <span class="small">Your file stays on your device — it is never uploaded.</span>
 <input type="file" id="fileInput" accept="${t.accept}"${t.multiple ? " multiple" : ""}>
 </div>
-<div class="work hidden" id="workArea" style="margin-top:18px">
+<div class="work hidden" id="workArea">
 <div class="filebar"><span class="fname" id="fileName"></span><span class="fmeta" id="fileMeta"></span></div>
 <div class="preview">${preview}</div>
 <div class="controls">${CONTROLS[t.ui](t)}</div>
+</div>
 <div class="result hidden" id="result" aria-live="polite"></div>
-</div></div></div>
-<section class="copy"><h2>How to ${t.name.toLowerCase()}</h2>
+</div></div>
+<section class="copy"><h2>${t.howto}</h2>
 <ol class="steps">${t.steps.map(s => "<li>" + s + "</li>").join("")}</ol>
 <h2>Questions</h2><div class="faq">
 ${t.faqs.map(f => "<details><summary>" + f[0] + "</summary><p>" + f[1] + "</p></details>").join("\n")}
@@ -197,13 +200,13 @@ ${footer(HPFX)}`;
 function homePage() {
   const HPFX = "";
   const url = BASE + "/";
-  const ld = [{ "@context": "https://schema.org", "@type": "WebApplication", name: "ImageStow", url, applicationCategory: "MultimediaApplication", operatingSystem: "Any (web browser)", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, description: "Free image tools — compress, resize, convert and edit images right in your browser. Private by design: files never leave your device. No sign-up.", publisher: { "@type": "Organization", name: "Safwan.Digital", url: "https://safwan.digital" } }];
+  const ld = [{ "@context": "https://schema.org", "@type": "SoftwareApplication", name: "ImageStow", url, applicationCategory: "MultimediaApplication", operatingSystem: "Any (web browser)", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, description: "Free image tools — compress, resize, convert and edit images right in your browser. Private by design: files never leave your device. No sign-up.", publisher: { "@type": "Organization", name: "Safwan.Digital", url: "https://safwan.digital" } }];
   const sections = CATS.map(c => {
     const cards = TOOLS.filter(t => t.cat === c.id).map(t =>
       `<a class="card" data-slug="${t.slug}" href="${t.slug}/"><span class="ic">${icon(t.icon)}</span><h3>${t.name}</h3><p>${t.desc}</p></a>`).join("\n");
     return `<section class="cat" id="cat-${c.id}"><h2>${c.name}</h2><p>${c.blurb}</p><div class="grid">${cards}</div></section>`;
   }).join("\n");
-  return head({ title: "ImageStow — Free Image Tools, Private by Design", meta: "Free image tools — compress, resize, convert, edit and clean images right in your browser. Private by design: files never leave your device. No sign-up.", url, ld }, "") + `
+  return head({ title: "ImageStow — Free Image Tools Online, Private by Design", meta: "Free image tools — compress, resize, convert, edit and clean images right in your browser. Private by design: files never leave your device. No sign-up.", url, ld }, "") + `
 <body>
 ${header(HPFX)}
 <main>
@@ -214,7 +217,7 @@ ${header(HPFX)}
 </div>
 <div class="wrap" id="tools">
 ${sections}
-<section class="copy" style="margin-left:0;padding-left:0"><h2>Why your photos stay private here</h2>
+<section class="copy flush"><h2>Why your photos stay private here</h2>
 <p>Most free image sites make you upload your photo to their server before they will touch it. ImageStow does the work inside your browser instead — the same technology that shows you this page also compresses and converts your images. Close the tab and nothing remains. There is no account, no upload queue and no copy of your picture anywhere but your device.</p>
 <h2>The most-loved tools</h2>
 <p><a href="compress-to-size/">Compress to a Target Size</a> gets a photo under the 200 KB limit that forms and portals demand. <a href="heic-to-jpg/">HEIC to JPG</a> opens iPhone photos anywhere. <a href="remove-metadata/">Remove Photo Metadata</a> strips the hidden location data most people never knew their photos carried. And when a job needs a PDF instead, our sister site <a href="https://pdfstow.safwan.digital/">PDFStow</a> does it the same private way.</p></section>
@@ -226,7 +229,8 @@ ${footer(HPFX)}`;
 function prosePage(slug, title, meta, h1, bodyHtml) {
   const HPFX = "../";
   const url = BASE + "/" + slug + "/";
-  return head({ title, meta, url }, "../") + `
+  const ld = [{ "@context": "https://schema.org", "@type": "WebPage", name: title, url, description: meta, isPartOf: { "@type": "WebSite", name: "ImageStow", url: BASE + "/" } }];
+  return head({ title, meta, url, ld }, "../") + `
 <body>
 ${header(HPFX)}
 <main><div class="prose"><h1>${h1}</h1>${bodyHtml}</div></main>
@@ -244,7 +248,7 @@ function write(rel, content) {
 write("index.html", homePage());
 for (const t of TOOLS) write(path.join(t.slug, "index.html"), toolPage(t));
 
-write("privacy/index.html", prosePage("privacy", "Privacy — ImageStow", "How ImageStow handles your files: they are never uploaded. Everything runs in your browser.", "Privacy, in plain words", `
+write("privacy/index.html", prosePage("privacy", "Privacy — How ImageStow Handles Your Files | ImageStow", "How ImageStow handles your files: they are never uploaded, never stored and never shared. Everything runs in your browser, on your device.", "Privacy, in plain words", `
 <p><strong>Your images are never uploaded.</strong> Every ImageStow tool runs inside your web browser, on your device. When you pick an image, your browser reads it, does the work in the page, and gives you the result to download. No copy of your image is sent to us or stored anywhere.</p>
 <h2>What does leave your device</h2>
 <p>Only program code, never your files:</p>
@@ -255,14 +259,14 @@ write("privacy/index.html", prosePage("privacy", "Privacy — ImageStow", "How I
 <p>The images you were working on are gone with it. Your downloads are yours — check them before sharing, because a downloaded copy carries whatever you put in it.</p>
 <p>Questions? Write to <a href="mailto:mail@safwan.digital">mail@safwan.digital</a>.</p>`));
 
-write("about/index.html", prosePage("about", "About — ImageStow", "ImageStow is a free set of browser image tools by Safwan.Digital — private by design.", "About ImageStow", `
+write("about/index.html", prosePage("about", "About ImageStow — Free Image Tools by Safwan.Digital", "ImageStow is a free set of image tools by Safwan.Digital that runs entirely in your browser — compress, resize, convert and edit with nothing uploaded.", "About ImageStow", `
 <p>ImageStow is a free set of image tools that runs entirely in your browser: compress, resize, convert, edit and clean up images without uploading them anywhere.</p>
 <p>It was built because the popular free tools all ask for the same thing — your photo, uploaded to their server, often with a batch limit or a sign-up wall. Your photos are personal. A picture of your ID, your product, your family should not need a trip to a stranger's server just to make it smaller.</p>
 <h2>The Stow family</h2>
 <p>ImageStow's sister site is <a href="https://pdfstow.safwan.digital/">PDFStow</a>, free PDF tools built on the same rule: the work happens on your device, private by design.</p>
 <p>Both are built by <a href="https://safwan.digital">Safwan.Digital</a>.</p>`));
 
-write("terms/index.html", prosePage("terms", "Terms — ImageStow", "The simple terms for using ImageStow's free browser image tools.", "Terms, in plain words", `
+write("terms/index.html", prosePage("terms", "ImageStow Terms — Simple, Plain-Word Rules | ImageStow", "The simple terms for using ImageStow's free browser image tools: free for personal and business use, your files stay yours, results are yours to check.", "Terms, in plain words", `
 <p>ImageStow is free to use for personal and business work. There is no account and no payment.</p>
 <h2>Your files, your responsibility</h2>
 <p>Your images never leave your device, so we never see them and cannot recover them. Keep your own copies of anything important. Check a result before you rely on it — for official documents, like passport photos, the issuing authority's rules decide what is accepted, and this site can only get the size and format right.</p>
@@ -270,13 +274,13 @@ write("terms/index.html", prosePage("terms", "Terms — ImageStow", "The simple 
 <p>The tools are provided as they are, without a warranty. Browsers differ, and a rare file may not convert — the tool will tell you plainly when that happens. We may improve, add or remove tools over time.</p>
 <p>Questions? <a href="mailto:mail@safwan.digital">mail@safwan.digital</a>.</p>`));
 
-write("contact/index.html", prosePage("contact", "Contact — ImageStow", "Contact ImageStow and Safwan.Digital.", "Contact", `
+write("contact/index.html", prosePage("contact", "Contact ImageStow — Questions & Feedback | ImageStow", "Contact ImageStow and Safwan.Digital by email — tell us which tool you used and what happened, and we will take a look. Please do not email images.", "Contact", `
 <p>The fastest way to reach us is email:</p>
-<p style="font-size:20px"><a href="mailto:mail@safwan.digital"><strong>mail@safwan.digital</strong></a></p>
+<p class="bigmail"><a href="mailto:mail@safwan.digital"><strong>mail@safwan.digital</strong></a></p>
 <p>Tell us which tool you used and what happened, and we will take a look. Please do not email us your images — the tools run in your browser precisely so your files never have to travel.</p>
 <p>ImageStow is built by <a href="https://safwan.digital">Safwan.Digital</a>.</p>`));
 
-write("404.html", head({ title: "Page not found — ImageStow", meta: "That page does not exist. Browse all free ImageStow tools instead.", url: BASE + "/404.html" }, "/") + `
+write("404.html", head({ title: "Page not found — ImageStow", meta: "That page does not exist. Browse all free ImageStow tools instead.", url: BASE + "/404.html", noindex: true, noCanonical: true }, "/") + `
 <body>${header("/")}<main><div class="prose"><h1>That page is not here</h1><p>The link may be old or mistyped. <a href="/">See all the image tools</a> instead.</p></div></main>${footer("/")}`);
 
 const urls = ["/", ...TOOLS.map(t => "/" + t.slug + "/"), "/privacy/", "/about/", "/terms/", "/contact/"];

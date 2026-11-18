@@ -13,7 +13,13 @@ const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 (function () {
   const btn = $("#themeBtn");
   if (!btn) return;
-  const sync = () => { btn.textContent = document.documentElement.dataset.theme === "dark" ? "☀ Light" : "☾ Dark"; };
+  const glyph = btn.querySelector(".tb-glyph");
+  const label = btn.querySelector(".tb-label");
+  const sync = () => {
+    const dark = document.documentElement.dataset.theme === "dark";
+    if (glyph && label) { glyph.textContent = dark ? "☀" : "☾"; label.textContent = dark ? "Light" : "Dark"; }
+    else btn.textContent = dark ? "☀ Light" : "☾ Dark";
+  };
   sync();
   btn.addEventListener("click", () => {
     const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";

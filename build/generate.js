@@ -71,7 +71,7 @@ function header(P) {
   return `<header class="site"><div class="wrap">
 <a class="logo" href="${home}"><img src="${P}logo-68.png" alt="" width="34" height="34">Image<span class="stow">Stow</span></a>
 <nav><a href="${P}#tools">All tools</a><a class="nav-extra" href="${P}compress-image/">Compress</a><a class="nav-extra" href="${P}heic-to-jpg/">HEIC to JPG</a><a href="${P}about/">About</a><a href="${P}privacy/">Privacy</a>
-<button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode">☾ Dark</button></nav>
+<button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode"><span class="tb-glyph" aria-hidden="true">☾</span><span class="tb-label">Dark</span></button></nav>
 </div></header>`;
 }
 function footer(P) {

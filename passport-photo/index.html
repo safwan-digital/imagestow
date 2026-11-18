@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob: https://cdn.jsdelivr.net; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<title>Passport Photo Size Maker Online Free — 35 × 45 mm | ImageStow</title>
+<meta name="description" content="Make a passport-size photo (35 × 45 mm at 300 dpi) free in your browser. No sign-up, no upload.">
+<meta name="theme-color" content="#1A365D">
+<link rel="canonical" href="https://imagestow.safwan.digital/passport-photo/">
+<meta property="og:title" content="Passport Photo Size Maker Online Free — 35 × 45 mm | ImageStow">
+<meta property="og:description" content="Make a passport-size photo (35 × 45 mm at 300 dpi) free in your browser. No sign-up, no upload.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://imagestow.safwan.digital/passport-photo/">
+<meta property="og:image" content="https://imagestow.safwan.digital/og-image.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ImageStow — free online image tools that keep your files private">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Passport Photo Size Maker Online Free — 35 × 45 mm | ImageStow">
+<meta name="twitter:description" content="Make a passport-size photo (35 × 45 mm at 300 dpi) free in your browser. No sign-up, no upload.">
+<meta name="twitter:image" content="https://imagestow.safwan.digital/og-image.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/styles.css">
+<script>try{var _t=localStorage.getItem('imagestow-theme');if(_t==='dark'||(_t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.dataset.theme='dark'}catch(e){}</script>
+<!-- Analytics placeholder: ImageStow has NO analytics property yet. When Safwan creates one, add its tags here and update /privacy/. Do NOT reuse PDFStow's GA/GTM/Clarity IDs. -->
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Passport Photo Size — ImageStow","url":"https://imagestow.safwan.digital/passport-photo/","applicationCategory":"MultimediaApplication","operatingSystem":"Any (web browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Make a passport-size photo (35 × 45 mm at 300 dpi) free in your browser. No sign-up, no upload.","publisher":{"@type":"Organization","name":"Safwan.Digital","url":"https://safwan.digital"}},{"@context":"https://schema.org","@type":"HowTo","name":"How to passport photo size","step":[{"@type":"HowToStep","position":1,"text":"Add a clear, front-facing photo with a plain background."},{"@type":"HowToStep","position":2,"text":"Pick the background colour — white is standard."},{"@type":"HowToStep","position":3,"text":"Press Make passport photo and download."}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What size is a passport photo?","acceptedAnswer":{"@type":"Answer","text":"The common standard is 35 mm wide × 45 mm tall. At 300 dpi print quality that is 413 × 531 pixels, which is exactly what this tool makes."}},{"@type":"Question","name":"Will this photo be accepted for my passport or visa?","acceptedAnswer":{"@type":"Answer","text":"Size is only one rule — lighting, background, glasses and head position rules differ by country. This tool gets the size and crop right; check your document's official photo rules before submitting."}},{"@type":"Question","name":"Is it free?","acceptedAnswer":{"@type":"Answer","text":"Yes — free, no account, no watermark."}},{"@type":"Question","name":"Are my photos uploaded?","acceptedAnswer":{"@type":"Answer","text":"No. Your photo is processed in your browser and never leaves your device — important for an ID photo."}}]}]</script>
+</head>
+<body data-tool="passport-photo">
+<header class="site"><div class="wrap">
+<a class="logo" href="/"><img src="/icon-192.png" alt="" width="34" height="34">Image<span class="stow">Stow</span></a>
+<nav><a href="/#tools">All tools</a><a href="/compress-image/">Compress</a><a href="/heic-to-jpg/">HEIC to JPG</a><a href="/about/">About</a><a href="/privacy/">Privacy</a>
+<button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode">☾ Dark</button></nav>
+</div></header>
+<main>
+<div class="tool-head"><span class="pill">Free · No sign-up · Nothing uploaded</span>
+<h1>Passport Photo Size</h1><p>Add a clear front-facing photo and ImageStow crops it to the standard passport size — 35 × 45 mm, 413 × 531 pixels at print quality — in your browser. Use a plain background and good light, and check the official rules for your document before printing. Nothing is uploaded.</p></div>
+<div class="wrap"><div class="tool-shell">
+<div class="drop" id="dropZone" role="button" tabindex="0" aria-label="Choose an image">
+<span class="big">Tap to choose an image, or drop it here</span>
+<span class="small">Your file stays on your device — it is never uploaded.</span>
+<input type="file" id="fileInput" accept="image/*">
+</div>
+<div class="work hidden" id="workArea" style="margin-top:18px">
+<div class="filebar"><span class="fname" id="fileName"></span><span class="fmeta" id="fileMeta"></span></div>
+<div class="preview"><img id="previewImg" alt="Preview of your image"></div>
+<div class="controls"><div class="ctl"><label for="bgc">Background colour</label><input type="color" id="bgc" value="#ffffff"></div>
+<div class="warn">Use a plain, light background and even light on your face, look straight at the camera, and check your document's official photo rules — size is only one of them.</div>
+<button class="btn" id="runBtn">Make passport photo</button></div>
+<div class="result hidden" id="result" aria-live="polite"></div>
+</div></div></div>
+<section class="copy"><h2>How to passport photo size</h2>
+<ol class="steps"><li>Add a clear, front-facing photo with a plain background.</li><li>Pick the background colour — white is standard.</li><li>Press Make passport photo and download.</li></ol>
+<h2>Questions</h2><div class="faq">
+<details><summary>What size is a passport photo?</summary><p>The common standard is 35 mm wide × 45 mm tall. At 300 dpi print quality that is 413 × 531 pixels, which is exactly what this tool makes.</p></details>
+<details><summary>Will this photo be accepted for my passport or visa?</summary><p>Size is only one rule — lighting, background, glasses and head position rules differ by country. This tool gets the size and crop right; check your document's official photo rules before submitting.</p></details>
+<details><summary>Is it free?</summary><p>Yes — free, no account, no watermark.</p></details>
+<details><summary>Are my photos uploaded?</summary><p>No. Your photo is processed in your browser and never leaves your device — important for an ID photo.</p></details>
+</div>
+<h2>Related tools</h2><div class="related"><a href="/resize-image/">Resize Image</a><a href="/resize-social/">Resize for Social Media</a><a href="/crop-image/">Crop Image</a></div>
+</section>
+</main>
+<footer class="site"><div class="wrap">
+<nav><a href="/">All tools</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/contact/">Contact</a><a href="https://pdfstow.safwan.digital/">PDFStow — free PDF tools</a></nav>
+<div><strong>ImageStow</strong> — free image tools, private by design. Your files are processed in your browser and never uploaded.</div>
+<div>Built by <a href="https://safwan.digital">Safwan.Digital</a></div>
+</div></footer>
+<script src="/tools-data.js"></script>
+<script src="/app.js"></script>
+</body></html>

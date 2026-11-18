@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob: https://cdn.jsdelivr.net; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<title>Colour Picker from Image Online Free — HEX & RGB | ImageStow</title>
+<meta name="description" content="Pick a colour from any image and get its HEX and RGB codes. Free, in your browser, no upload.">
+<meta name="theme-color" content="#1A365D">
+<link rel="canonical" href="https://imagestow.safwan.digital/colour-picker/">
+<meta property="og:title" content="Colour Picker from Image Online Free — HEX & RGB | ImageStow">
+<meta property="og:description" content="Pick a colour from any image and get its HEX and RGB codes. Free, in your browser, no upload.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://imagestow.safwan.digital/colour-picker/">
+<meta property="og:image" content="https://imagestow.safwan.digital/og-image.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ImageStow — free online image tools that keep your files private">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Colour Picker from Image Online Free — HEX & RGB | ImageStow">
+<meta name="twitter:description" content="Pick a colour from any image and get its HEX and RGB codes. Free, in your browser, no upload.">
+<meta name="twitter:image" content="https://imagestow.safwan.digital/og-image.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/styles.css">
+<script>try{var _t=localStorage.getItem('imagestow-theme');if(_t==='dark'||(_t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.dataset.theme='dark'}catch(e){}</script>
+<!-- Analytics placeholder: ImageStow has NO analytics property yet. When Safwan creates one, add its tags here and update /privacy/. Do NOT reuse PDFStow's GA/GTM/Clarity IDs. -->
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Colour Picker from Image — ImageStow","url":"https://imagestow.safwan.digital/colour-picker/","applicationCategory":"MultimediaApplication","operatingSystem":"Any (web browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Pick a colour from any image and get its HEX and RGB codes. Free, in your browser, no upload.","publisher":{"@type":"Organization","name":"Safwan.Digital","url":"https://safwan.digital"}},{"@context":"https://schema.org","@type":"HowTo","name":"How to colour picker from image","step":[{"@type":"HowToStep","position":1,"text":"Add your image."},{"@type":"HowToStep","position":2,"text":"Click the spot whose colour you want."},{"@type":"HowToStep","position":3,"text":"Copy the HEX code with one tap."}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is the colour picker free?","acceptedAnswer":{"@type":"Answer","text":"Yes — free, no account."}},{"@type":"Question","name":"How accurate is the colour?","acceptedAnswer":{"@type":"Answer","text":"It reads the actual pixel you clicked in the full-size image, so the code is exact for that spot. Photos have thousands of slightly different pixels — click a few spots to find the one you want."}},{"@type":"Question","name":"What is the difference between HEX and RGB?","acceptedAnswer":{"@type":"Answer","text":"They are two ways of writing the same colour. HEX (like #C5A059) is what websites and design tools usually ask for; RGB lists the red, green and blue amounts."}},{"@type":"Question","name":"Are my images uploaded?","acceptedAnswer":{"@type":"Answer","text":"No. The picking happens in your browser."}}]}]</script>
+</head>
+<body data-tool="colour-picker">
+<header class="site"><div class="wrap">
+<a class="logo" href="/"><img src="/icon-192.png" alt="" width="34" height="34">Image<span class="stow">Stow</span></a>
+<nav><a href="/#tools">All tools</a><a href="/compress-image/">Compress</a><a href="/heic-to-jpg/">HEIC to JPG</a><a href="/about/">About</a><a href="/privacy/">Privacy</a>
+<button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode">☾ Dark</button></nav>
+</div></header>
+<main>
+<div class="tool-head"><span class="pill">Free · No sign-up · Nothing uploaded</span>
+<h1>Colour Picker from Image</h1><p>Add an image, click any spot on it, and ImageStow tells you the exact colour under your click — HEX and RGB codes you can copy straight into your design tool or website. It all runs in your browser; nothing is uploaded.</p></div>
+<div class="wrap"><div class="tool-shell">
+<div class="drop" id="dropZone" role="button" tabindex="0" aria-label="Choose an image">
+<span class="big">Tap to choose an image, or drop it here</span>
+<span class="small">Your file stays on your device — it is never uploaded.</span>
+<input type="file" id="fileInput" accept="image/*">
+</div>
+<div class="work hidden" id="workArea" style="margin-top:18px">
+<div class="filebar"><span class="fname" id="fileName"></span><span class="fmeta" id="fileMeta"></span></div>
+<div class="preview"><canvas id="stage" aria-label="Your image — work area"></canvas></div>
+<div class="controls"><p class="note">Click anywhere on your image to pick its colour.</p></div>
+<div class="result hidden" id="result" aria-live="polite"></div>
+</div></div></div>
+<section class="copy"><h2>How to colour picker from image</h2>
+<ol class="steps"><li>Add your image.</li><li>Click the spot whose colour you want.</li><li>Copy the HEX code with one tap.</li></ol>
+<h2>Questions</h2><div class="faq">
+<details><summary>Is the colour picker free?</summary><p>Yes — free, no account.</p></details>
+<details><summary>How accurate is the colour?</summary><p>It reads the actual pixel you clicked in the full-size image, so the code is exact for that spot. Photos have thousands of slightly different pixels — click a few spots to find the one you want.</p></details>
+<details><summary>What is the difference between HEX and RGB?</summary><p>They are two ways of writing the same colour. HEX (like #C5A059) is what websites and design tools usually ask for; RGB lists the red, green and blue amounts.</p></details>
+<details><summary>Are my images uploaded?</summary><p>No. The picking happens in your browser.</p></details>
+</div>
+<h2>Related tools</h2><div class="related"><a href="/view-metadata/">View Photo Metadata</a><a href="/image-editor/">Image Editor</a><a href="/favicon-generator/">Favicon Generator</a></div>
+</section>
+</main>
+<footer class="site"><div class="wrap">
+<nav><a href="/">All tools</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/contact/">Contact</a><a href="https://pdfstow.safwan.digital/">PDFStow — free PDF tools</a></nav>
+<div><strong>ImageStow</strong> — free image tools, private by design. Your files are processed in your browser and never uploaded.</div>
+<div>Built by <a href="https://safwan.digital">Safwan.Digital</a></div>
+</div></footer>
+<script src="/tools-data.js"></script>
+<script src="/app.js"></script>
+</body></html>

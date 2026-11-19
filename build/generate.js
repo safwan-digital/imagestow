@@ -42,7 +42,7 @@ function head(o, pfx) {
 <html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'${o.cspEval ? " 'unsafe-eval' 'wasm-unsafe-eval'" : ""} https://cdn.jsdelivr.net; style-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob: https://cdn.jsdelivr.net; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'${o.cspEval ? " 'unsafe-eval' 'wasm-unsafe-eval'" : ""} https://cdn.jsdelivr.net https://www.googletagmanager.com https://*.clarity.ms; style-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob: https://cdn.jsdelivr.net https://www.google-analytics.com https://*.google-analytics.com https://*.clarity.ms; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>${o.title}</title>
 <meta name="description" content="${o.meta}">
 ${robots}<meta name="theme-color" content="#1A365D">
@@ -60,18 +60,31 @@ ${ogUrl}
 <link rel="icon" href="${P}favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="${P}favicon-32.png">
 <link rel="apple-touch-icon" href="${P}apple-touch-icon.png">
-<link rel="stylesheet" href="${P}styles.css">
+<link rel="stylesheet" href="${P}styles.css?v=120">
 <script>try{var _t=localStorage.getItem('imagestow-theme');if(_t==='dark'||(_t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.dataset.theme='dark'}catch(e){}</script>
-<!-- Analytics placeholder: ImageStow has NO analytics property yet. When Safwan creates one, add its tags here and update /privacy/. Do NOT reuse PDFStow's GA/GTM/Clarity IDs. -->
+<script>
+/* Analytics: Google Analytics (G-JVKBLYBEDG) + Microsoft Clarity (zfqhjlmxb3), ImageStow's own properties — never PDFStow's IDs.
+   PDFStow v4.7.2 pattern: start only after window load + idle, so analytics never blocks rendering.
+   Hostname gate: only ImageStow's real addresses report — local QA and test copies stay silent.
+   These services count page visits only; images are processed in the browser and never sent anywhere. See /privacy/. */
+(function(){var OK={"imagestow.safwan.digital":1,"safwan-digital.github.io":1};if(!OK[location.hostname])return;
+function start(){
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag("js",new Date());gtag("config","G-JVKBLYBEDG");
+var g=document.createElement("script");g.async=true;g.src="https://www.googletagmanager.com/gtag/js?id=G-JVKBLYBEDG";document.head.appendChild(g);
+(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","zfqhjlmxb3");
+}
+function idle(){if("requestIdleCallback" in window)requestIdleCallback(start,{timeout:3000});else setTimeout(start,1200);}
+if(document.readyState==="complete")idle();else window.addEventListener("load",idle);})();
+</script>
 ${ld}
 </head>`;
 }
 function header(P) {
   const home = P === "" ? "./" : P;
   return `<header class="site"><div class="wrap">
-<a class="logo" href="${home}"><img src="${P}logo-68.png" alt="" width="34" height="34">Image<span class="stow">Stow</span></a>
+<a class="logo" href="${home}"><img src="${P}logo-68.png" alt="" width="34" height="34"><span class="wordmark">Image<span class="stow">Stow</span></span></a>
 <nav><a href="${P}#tools">All tools</a><a class="nav-extra" href="${P}compress-image/">Compress</a><a class="nav-extra" href="${P}heic-to-jpg/">HEIC to JPG</a><a href="${P}about/">About</a><a href="${P}privacy/">Privacy</a>
-<button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode"><span class="tb-glyph" aria-hidden="true">☾</span><span class="tb-label">Dark</span></button></nav>
+<button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode"><svg class="tb-ico ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg><svg class="tb-ico ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg><span class="tb-label">Dark</span></button></nav>
 </div></header>`;
 }
 function footer(P) {
@@ -82,7 +95,7 @@ function footer(P) {
 <div>Built by <a href="https://safwan.digital">Safwan.Digital</a></div>
 </div></footer>
 <script src="${P}tools-data.js"></script>
-<script src="${P}app.js"></script>
+<script src="${P}app.js?v=120"></script>
 </body></html>`;
 }
 
@@ -254,7 +267,10 @@ write("privacy/index.html", prosePage("privacy", "Privacy — How ImageStow Hand
 <p>Only program code, never your files:</p>
 <ul><li>The pages, design and tool code of this website itself.</li><li>On three tools only, a well-known open-source library is downloaded once so your browser can do the job: the HEIC reader (HEIC to JPG), the PDF maker (Images to PDF), and the ZIP maker (Bulk Compress and Favicon Generator). These libraries run on your device; they do not receive your images.</li></ul>
 <h2>What we store</h2>
-<p>One small setting on your device: your light/dark theme choice, kept in your browser's local storage. There are no accounts and no sign-ups. This site currently uses no analytics and no advertising, so there are no tracking cookies from us. If that ever changes, this page will say so plainly before it happens.</p>
+<p>One small setting on your device: your light/dark theme choice, kept in your browser's local storage. There are no accounts and no sign-ups, and we show no advertising. The visit counters below do set cookies of their own, run by Google and Microsoft.</p>
+<h2>Counting visits</h2>
+<p>We use two well-known services — <strong>Google Analytics</strong> and <strong>Microsoft Clarity</strong> — to count visits and see how this site is used: which pages and tools people open, what they click, how far they scroll, the kind of device and browser, and a rough location (country or city, never an exact address). We read those numbers to learn which tools are loved, which are confusing, and what to fix next.</p>
+<p><strong>Your images are never part of this.</strong> They are processed inside your browser and never uploaded, so there is nothing about them for anyone to track — no picture, no file name, nothing. The counters only ever see that a page was visited, never the files you work on.</p>
 <h2>When you close the tab</h2>
 <p>The images you were working on are gone with it. Your downloads are yours — check them before sharing, because a downloaded copy carries whatever you put in it.</p>
 <p>Questions? Write to <a href="mailto:mail@safwan.digital">mail@safwan.digital</a>.</p>`));

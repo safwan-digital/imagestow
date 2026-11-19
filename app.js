@@ -4,8 +4,9 @@
    - heic2any 0.0.4 (HEIC decode, heic-to-jpg only)
    - pdf-lib 1.17.1 (images-to-pdf only)
    - JSZip 3.10.1 (bulk-compress and favicon-generator ZIP downloads)
-   Analytics: NOT installed yet — no ImageStow GA/GTM/Clarity property exists.
-   TODO(analytics): add ImageStow's own tags here after Safwan creates the property. Do NOT reuse PDFStow IDs. */
+   Analytics: Google Analytics (G-JVKBLYBEDG) + Microsoft Clarity (zfqhjlmxb3), ImageStow's own
+   properties, wired in build/generate.js — they start after load + idle and only on
+   imagestow.safwan.digital / safwan-digital.github.io. Visits only; images are never sent. Do NOT reuse PDFStow IDs. */
 const $ = (s, r) => (r || document).querySelector(s);
 const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 
@@ -13,12 +14,13 @@ const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 (function () {
   const btn = $("#themeBtn");
   if (!btn) return;
-  const glyph = btn.querySelector(".tb-glyph");
   const label = btn.querySelector(".tb-label");
   const sync = () => {
     const dark = document.documentElement.dataset.theme === "dark";
-    if (glyph && label) { glyph.textContent = dark ? "☀" : "☾"; label.textContent = dark ? "Light" : "Dark"; }
-    else btn.textContent = dark ? "☀ Light" : "☾ Dark";
+    /* The moon/sun icons are inline SVGs switched purely by CSS ([data-theme] .ico-moon/.ico-sun).
+       JS must never rewrite the button's content — that would destroy the SVGs.
+       Only the text label swaps here. */
+    if (label) label.textContent = dark ? "Light" : "Dark";
   };
   sync();
   btn.addEventListener("click", () => {
@@ -283,7 +285,11 @@ const state = { files: [], img: null, url: null, extra: {} };
 function showError(msg) {
   const r = $("#result"); if (!r) return;
   r.classList.remove("hidden");
-  r.innerHTML = '<p class="err" role="alert">' + msg + "</p>";
+  const p = document.createElement("p");
+  p.className = "err";
+  p.setAttribute("role", "alert");
+  p.textContent = msg;
+  r.replaceChildren(p);
 }
 function resultBox(html) {
   const r = $("#result");

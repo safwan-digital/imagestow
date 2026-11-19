@@ -1,21 +1,25 @@
 :root{--bg:#f8f4ec;--bg2:#eee5d3;--glass:rgba(255,255,255,.62);--glass2:rgba(255,255,255,.42);--stroke:rgba(255,255,255,.65);--card-solid:#faf8f1;--card-stroke:rgba(26,54,93,.30);--ink:#13233c;--muted:#655d4f;--accent:#1a365d;--accent2:#2e5583;--accent3:#c5a059;--acc-rgb:197,160,89;--btn-grad:linear-gradient(95deg,#122741 0%,#1a365d 58%,#a8843e 165%);--em-grad:linear-gradient(90deg,#1a365d,#7d6435 55%,#8a6d2f);--logo-grad:linear-gradient(90deg,#1a365d,#8a6d2f);--ringc:#1a365d;--focus-ring:0 0 0 2px rgba(26,54,93,.85),0 0 0 5px rgba(197,160,89,.50);--drop-stroke:rgba(26,54,93,.55);--ok:#2c7348;--bad:#a33327;--shadow:0 20px 50px rgba(26,54,93,.15);--spring:cubic-bezier(.22,1.4,.36,1);--fs-1:12px;--fs-2:13px;--fs-3:14px;--fs-4:16px;--fs-5:18px;--fs-6:22px;--fs-7:30px;--fs-hero:clamp(38px,7vw,68px);--fs-lede:clamp(16px,2.4vw,20px);--r-sm:8px;--r-md:14px;--r-lg:24px;--r-pill:999px}
 [data-theme=dark]{--bg:#070d1a;--bg2:#0c1626;--glass:rgba(16,28,50,.62);--glass2:rgba(16,28,50,.42);--stroke:rgba(255,236,205,.14);--card-solid:#0d1629;--card-stroke:rgba(255,236,205,.34);--ink:#f4eee1;--muted:#aba08d;--accent:#c5a059;--accent2:#7fa8d9;--accent3:#e3c078;--btn-grad:linear-gradient(95deg,#1a365d 0%,#2e5583 58%,#a8843e 165%);--em-grad:linear-gradient(90deg,#7fa8d9,#c5a059 55%,#e3c078);--logo-grad:linear-gradient(90deg,#7fa8d9,#e3c078);--ringc:#e3c078;--focus-ring:0 0 0 2px rgba(197,160,89,.55),0 0 0 5px rgba(197,160,89,.22);--ok:#57b87e;--bad:#e88a7d;--shadow:0 20px 50px rgba(0,0,0,.5);--drop-stroke:rgba(255,236,205,.45)}
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scrollbar-gutter:stable;scroll-padding-top:96px}
+html{scroll-behavior:smooth;scrollbar-gutter:stable;scroll-padding-top:96px;-webkit-text-size-adjust:100%}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Inter,Arial,sans-serif;color:var(--ink);background:radial-gradient(900px 500px at 15% -5%,rgba(26,54,93,.20),transparent 60%),radial-gradient(800px 500px at 90% 0%,rgba(197,160,89,.30),transparent 60%),radial-gradient(700px 600px at 50% 110%,rgba(216,192,148,.24),transparent 60%),linear-gradient(160deg,var(--bg),var(--bg2));min-height:100vh;-webkit-font-smoothing:antialiased}
 a{color:inherit}
 :focus-visible{outline:none;box-shadow:var(--focus-ring);border-radius:6px}
 .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
 header.site{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:var(--glass2);border-bottom:1px solid var(--stroke)}
 header.site .wrap{display:flex;align-items:center;gap:18px;padding-top:12px;padding-bottom:12px}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:20px;letter-spacing:-.02em;min-height:44px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:20px;letter-spacing:-.02em;min-height:44px;line-height:1}
 .logo img{width:34px;height:34px;border-radius:9px}
+.wordmark{display:inline-flex;align-items:center;line-height:1}
 .logo .stow{background:var(--logo-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-header.site nav{display:flex;gap:16px;margin-left:auto;align-items:center;flex-wrap:wrap}
-header.site nav a{text-decoration:none;font-size:var(--fs-3);font-weight:600;color:var(--muted);display:inline-flex;align-items:center;min-height:44px;padding:0 4px}
+header.site nav{display:flex;gap:16px;margin-left:auto;align-items:center;flex-wrap:nowrap}
+header.site nav a{text-decoration:none;font-size:var(--fs-3);font-weight:600;color:var(--muted);display:inline-flex;align-items:center;min-height:44px;padding:0 4px;line-height:1}
 header.site nav a:hover{color:var(--ink)}
 .icon-btn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 14px;border-radius:var(--r-pill);border:1px solid var(--card-stroke);background:var(--card-solid);color:var(--ink);font-weight:600;font-size:var(--fs-2);cursor:pointer}
-.tb-glyph{line-height:1}
+.icon-btn .tb-ico{width:18px;height:18px;display:block;flex:none}
+.icon-btn .ico-sun{display:none}
+[data-theme=dark] .icon-btn .ico-moon{display:none}
+[data-theme=dark] .icon-btn .ico-sun{display:block}
 .hero{text-align:center;padding:56px 20px 10px}
 .hero h1{font-size:var(--fs-hero);line-height:1.04;letter-spacing:-.03em;margin:0 0 14px}
 .hero h1 em{font-style:normal;background:var(--em-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -110,7 +114,8 @@ footer.site{margin-top:70px;border-top:1px solid var(--stroke);background:var(--
 footer.site .wrap{padding-top:28px;padding-bottom:34px;display:grid;gap:8px;font-size:var(--fs-3);color:var(--muted)}
 footer.site nav{display:flex;gap:16px;flex-wrap:wrap}
 footer.site a{text-decoration:none;font-weight:600;display:inline-flex;align-items:center;min-height:44px}
-@media(max-width:640px){header.site .wrap{gap:6px;padding:8px 12px;flex-wrap:nowrap}header.site nav{gap:2px;flex-wrap:nowrap}header.site nav a{white-space:nowrap;padding:0 2px;font-size:13px}header.site nav a.nav-extra{display:none}header.site .icon-btn{flex:none;width:44px;height:44px;min-width:44px;padding:0;justify-content:center}header.site .icon-btn .tb-label{display:none}header.site .icon-btn .tb-glyph{font-size:17px}.logo{font-size:16px;gap:6px;flex:none}.logo img{width:30px;height:30px}.tool-head{padding:26px 16px 2px}.tool-head p{font-size:var(--fs-4)}.tool-shell{padding:16px}.hero{padding:36px 16px 8px}}
+@media(max-width:900px){header.site nav a.nav-extra{display:none}}
+@media(max-width:640px){header.site .wrap{gap:6px;padding:8px 12px;flex-wrap:nowrap}header.site nav{gap:2px;flex-wrap:nowrap}header.site nav a{white-space:nowrap;padding:0 3px;font-size:13px;line-height:1}header.site .icon-btn{flex:none;width:44px;height:44px;min-width:44px;padding:0;justify-content:center}header.site .icon-btn .tb-label{display:none}.logo{font-size:15px;gap:6px;flex:none;line-height:1}.logo img{width:30px;height:30px}.tool-head{padding:26px 16px 2px}.tool-head p{font-size:var(--fs-4)}.tool-shell{padding:16px}.hero{padding:36px 16px 8px}}
 @media(max-width:380px){header.site .wrap{gap:4px;padding:8px 10px}header.site nav{gap:0}header.site nav a{padding:0 1px;font-size:12.5px}.logo{font-size:14px;gap:5px}.logo img{width:28px;height:28px}}
 footer.site a:hover{color:var(--ink)}
 .prose{max-width:760px;margin:0 auto;padding:44px 20px 0}

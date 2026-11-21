@@ -42,7 +42,7 @@ function head(o, pfx) {
 <html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'${o.cspEval ? " 'unsafe-eval' 'wasm-unsafe-eval'" : ""} https://cdn.jsdelivr.net https://www.googletagmanager.com https://*.clarity.ms; style-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob: https://cdn.jsdelivr.net https://www.google-analytics.com https://*.google-analytics.com https://*.clarity.ms; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'${o.cspEval ? " 'unsafe-eval' 'wasm-unsafe-eval'" : ""} https://cdn.jsdelivr.net https://www.googletagmanager.com https://*.clarity.ms https://browser.sentry-cdn.com; style-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob: https://cdn.jsdelivr.net https://www.google-analytics.com https://*.google-analytics.com https://*.clarity.ms https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>${o.title}</title>
 <meta name="description" content="${o.meta}">
 ${robots}<meta name="theme-color" content="#1A365D">
@@ -64,17 +64,56 @@ ${ogUrl}
 <script>try{var _t=localStorage.getItem('imagestow-theme');if(_t==='dark'||(_t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.dataset.theme='dark'}catch(e){}</script>
 <script>
 /* Analytics: Google Analytics (G-JVKBLYBEDG) + Microsoft Clarity (zfqhjlmxb3), ImageStow's own properties — never PDFStow's IDs.
-   PDFStow v4.7.2 pattern: start only after window load + idle, so analytics never blocks rendering.
+   Error tracking: Sentry (ImageStow project 4512469030469632) — errors only, no session replay, no tracing,
+   no personal data (sendDefaultPii off) and a beforeSend scrub that strips request headers, URL query
+   strings and user data. The SDK comes from Sentry's own CDN, browser.sentry-cdn.com (CSP script-src);
+   events go to the org's US ingest host o4512462711357440.ingest.us.sentry.io (CSP connect-src carries
+   *.ingest.sentry.io + *.ingest.us.sentry.io + *.ingest.de.sentry.io, PDFStow's proven set — the US entry
+   is the one that matches this org's host). A one-time self-test fires on ?sentrytest=1.
+   Scheduling (PDFStow v4.7.9 law): analytics AND error tracking start together on the first user
+   interaction (pointerdown/keydown/scroll, once) or on an idle callback with a 3.5s bound after window
+   load — whichever comes first — so trackers never compete with first paint.
    Hostname gate: only ImageStow's real addresses report — local QA and test copies stay silent.
-   These services count page visits only; images are processed in the browser and never sent anywhere. See /privacy/. */
+   These services count page visits and report errors only; images are processed in the browser and
+   never sent anywhere. See /privacy/. */
 (function(){var OK={"imagestow.safwan.digital":1,"safwan-digital.github.io":1};if(!OK[location.hostname])return;
-function start(){
+if(!/^https?:$/.test(location.protocol))return;
+function startAnalytics(){
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag("js",new Date());gtag("config","G-JVKBLYBEDG");
 var g=document.createElement("script");g.async=true;g.src="https://www.googletagmanager.com/gtag/js?id=G-JVKBLYBEDG";document.head.appendChild(g);
 (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","zfqhjlmxb3");
 }
-function idle(){if("requestIdleCallback" in window)requestIdleCallback(start,{timeout:3000});else setTimeout(start,1200);}
-if(document.readyState==="complete")idle();else window.addEventListener("load",idle);})();
+function startErrorTracking(){
+try{
+var s=document.createElement("script");s.async=true;
+s.src="https://browser.sentry-cdn.com/8.42.0/bundle.min.js";
+s.onload=function(){
+try{
+if(!window.Sentry)return;
+Sentry.init({
+dsn:"https://f69176927de9422735d4cb58d711f611@o4512462711357440.ingest.us.sentry.io/4512469030469632",
+sendDefaultPii:false,
+tracesSampleRate:0,
+beforeSend:function(event){
+try{
+if(event.request){delete event.request.headers;if(event.request.url)event.request.url=event.request.url.split("?")[0];}
+delete event.user;
+if(event.breadcrumbs)event.breadcrumbs=event.breadcrumbs.map(function(b){return{timestamp:b.timestamp,type:b.type,level:b.level,category:b.category};});
+}catch(e){}
+return event;
+}
+});
+if(/[?&]sentrytest=1/.test(location.search))Sentry.captureException(new Error("ImageStow Sentry self-test"));
+}catch(e){}
+};
+document.head.appendChild(s);
+}catch(e){}
+}
+var done=false;
+function start(){if(done)return;done=true;try{startAnalytics();}catch(e){}try{startErrorTracking();}catch(e){}}
+function idle(){if("requestIdleCallback" in window)requestIdleCallback(start,{timeout:3500});else setTimeout(start,3500);}
+if(document.readyState==="complete")idle();else window.addEventListener("load",idle);
+["pointerdown","keydown","scroll"].forEach(function(ev){window.addEventListener(ev,start,{once:true,passive:true});});})();
 </script>
 ${ld}
 </head>`;
@@ -271,6 +310,8 @@ write("privacy/index.html", prosePage("privacy", "Privacy — How ImageStow Hand
 <h2>Counting visits</h2>
 <p>We use two well-known services — <strong>Google Analytics</strong> and <strong>Microsoft Clarity</strong> — to count visits and see how this site is used: which pages and tools people open, what they click, how far they scroll, the kind of device and browser, and a rough location (country or city, never an exact address). We read those numbers to learn which tools are loved, which are confusing, and what to fix next.</p>
 <p><strong>Your images are never part of this.</strong> They are processed inside your browser and never uploaded, so there is nothing about them for anyone to track — no picture, no file name, nothing. The counters only ever see that a page was visited, never the files you work on.</p>
+<h2>Error reports</h2>
+<p>If a tool breaks in your browser, a service called <strong>Sentry</strong> sends us a short technical report about the error itself, so we can fix it: what kind of error happened, the page it happened on, and the kind of browser. Before anything is sent, the report is cleaned in your browser — web addresses are stripped of everything after the question mark, request headers and any user details are removed, and no personal data is sent. <strong>Your images are never part of an error report either</strong> — no picture, no file contents, no file name. Like the visit counters, error reporting only starts once you first interact with the page, or shortly after it has finished loading.</p>
 <h2>When you close the tab</h2>
 <p>The images you were working on are gone with it. Your downloads are yours — check them before sharing, because a downloaded copy carries whatever you put in it.</p>
 <p>Questions? Write to <a href="mailto:mail@safwan.digital">mail@safwan.digital</a>.</p>`));

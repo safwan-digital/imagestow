@@ -6,7 +6,7 @@
    - JSZip 3.10.1 (bulk-compress and favicon-generator ZIP downloads)
    Analytics: Google Analytics (G-JVKBLYBEDG) + Microsoft Clarity (zfqhjlmxb3), ImageStow's own
    properties, wired in build/generate.js — they start after load + idle and only on
-   imagestow.safwan.digital / safwan-digital.github.io. Visits only; images are never sent. Do NOT reuse PDFStow IDs. */
+   imagestow.com / imagestow.safwan.digital / safwan-digital.github.io. Visits only; images are never sent. Do NOT reuse PDFStow IDs. */
 const $ = (s, r) => (r || document).querySelector(s);
 const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 

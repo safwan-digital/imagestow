@@ -3,34 +3,34 @@
 > Free image tools that run 100% in the browser: files are never uploaded, no sign-up. Built by Safwan.Digital. Sister site: PDFStow (PDF tools, same rule).
 
 ## Tools
-- [JPG to PNG](https://imagestow.safwan.digital/jpg-to-png/): Turn a JPG photo into a PNG file.
-- [PNG to JPG](https://imagestow.safwan.digital/png-to-jpg/): Turn a PNG into a smaller JPG photo.
-- [JPG to WebP](https://imagestow.safwan.digital/jpg-to-webp/): Make a JPG about 30% smaller as WebP.
-- [PNG to WebP](https://imagestow.safwan.digital/png-to-webp/): Shrink a PNG as a WebP, keeping transparency.
-- [WebP to JPG](https://imagestow.safwan.digital/webp-to-jpg/): Turn a WebP image into a JPG anyone can open.
-- [WebP to PNG](https://imagestow.safwan.digital/webp-to-png/): Turn a WebP image into a PNG, keeping transparency.
-- [HEIC to JPG](https://imagestow.safwan.digital/heic-to-jpg/): Open iPhone HEIC photos as normal JPGs.
-- [SVG to PNG](https://imagestow.safwan.digital/svg-to-png/): Turn an SVG logo or icon into a PNG at any size.
-- [Images to PDF](https://imagestow.safwan.digital/images-to-pdf/): Put several images into one PDF file.
-- [Compress Image](https://imagestow.safwan.digital/compress-image/): Make an image file smaller, with a quality slider.
-- [Compress to a Target Size](https://imagestow.safwan.digital/compress-to-size/): Shrink an image to under 200 KB, 100 KB, 50 KB or your size.
-- [Bulk Compress Images](https://imagestow.safwan.digital/bulk-compress/): Compress many images at once and download a ZIP.
-- [Resize Image](https://imagestow.safwan.digital/resize-image/): Change an image's width and height in pixels.
-- [Resize for Social Media](https://imagestow.safwan.digital/resize-social/): Exact sizes for Instagram, YouTube, Facebook and more.
-- [Passport Photo Size](https://imagestow.safwan.digital/passport-photo/): Make a 35 × 45 mm passport-size photo, ready to print.
-- [Image Editor](https://imagestow.safwan.digital/image-editor/): Crop, rotate, brighten, add filters and text — all in one.
-- [Crop Image](https://imagestow.safwan.digital/crop-image/): Drag a box and cut away the parts you don't want.
-- [Rotate & Flip](https://imagestow.safwan.digital/rotate-flip/): Turn an image left or right, or flip it over.
-- [Add Watermark](https://imagestow.safwan.digital/add-watermark/): Put your name or shop name across a photo.
-- [Blur Part of an Image](https://imagestow.safwan.digital/blur-part/): Hide a face, number plate or address before you share.
-- [Add Background / Border](https://imagestow.safwan.digital/add-background/): Put a colour behind a transparent image, or add a border.
-- [Remove Photo Metadata](https://imagestow.safwan.digital/remove-metadata/): Strip the hidden camera, date and GPS details from a photo.
-- [View Photo Metadata](https://imagestow.safwan.digital/view-metadata/): See what a photo reveals: camera, date and GPS location.
-- [Favicon Generator](https://imagestow.safwan.digital/favicon-generator/): Make every website icon size from one image.
-- [Colour Picker from Image](https://imagestow.safwan.digital/colour-picker/): Click any spot on a photo to get its colour code.
+- [JPG to PNG](https://imagestow.com/jpg-to-png/): Turn a JPG photo into a PNG file.
+- [PNG to JPG](https://imagestow.com/png-to-jpg/): Turn a PNG into a smaller JPG photo.
+- [JPG to WebP](https://imagestow.com/jpg-to-webp/): Make a JPG about 30% smaller as WebP.
+- [PNG to WebP](https://imagestow.com/png-to-webp/): Shrink a PNG as a WebP, keeping transparency.
+- [WebP to JPG](https://imagestow.com/webp-to-jpg/): Turn a WebP image into a JPG anyone can open.
+- [WebP to PNG](https://imagestow.com/webp-to-png/): Turn a WebP image into a PNG, keeping transparency.
+- [HEIC to JPG](https://imagestow.com/heic-to-jpg/): Open iPhone HEIC photos as normal JPGs.
+- [SVG to PNG](https://imagestow.com/svg-to-png/): Turn an SVG logo or icon into a PNG at any size.
+- [Images to PDF](https://imagestow.com/images-to-pdf/): Put several images into one PDF file.
+- [Compress Image](https://imagestow.com/compress-image/): Make an image file smaller, with a quality slider.
+- [Compress to a Target Size](https://imagestow.com/compress-to-size/): Shrink an image to under 200 KB, 100 KB, 50 KB or your size.
+- [Bulk Compress Images](https://imagestow.com/bulk-compress/): Compress many images at once and download a ZIP.
+- [Resize Image](https://imagestow.com/resize-image/): Change an image's width and height in pixels.
+- [Resize for Social Media](https://imagestow.com/resize-social/): Exact sizes for Instagram, YouTube, Facebook and more.
+- [Passport Photo Size](https://imagestow.com/passport-photo/): Make a 35 × 45 mm passport-size photo, ready to print.
+- [Image Editor](https://imagestow.com/image-editor/): Crop, rotate, brighten, add filters and text — all in one.
+- [Crop Image](https://imagestow.com/crop-image/): Drag a box and cut away the parts you don't want.
+- [Rotate & Flip](https://imagestow.com/rotate-flip/): Turn an image left or right, or flip it over.
+- [Add Watermark](https://imagestow.com/add-watermark/): Put your name or shop name across a photo.
+- [Blur Part of an Image](https://imagestow.com/blur-part/): Hide a face, number plate or address before you share.
+- [Add Background / Border](https://imagestow.com/add-background/): Put a colour behind a transparent image, or add a border.
+- [Remove Photo Metadata](https://imagestow.com/remove-metadata/): Strip the hidden camera, date and GPS details from a photo.
+- [View Photo Metadata](https://imagestow.com/view-metadata/): See what a photo reveals: camera, date and GPS location.
+- [Favicon Generator](https://imagestow.com/favicon-generator/): Make every website icon size from one image.
+- [Colour Picker from Image](https://imagestow.com/colour-picker/): Click any spot on a photo to get its colour code.
 
 ## Pages
-- [About](https://imagestow.safwan.digital/about/)
-- [Privacy](https://imagestow.safwan.digital/privacy/)
-- [Terms](https://imagestow.safwan.digital/terms/)
-- [Contact](https://imagestow.safwan.digital/contact/)
+- [About](https://imagestow.com/about/)
+- [Privacy](https://imagestow.com/privacy/)
+- [Terms](https://imagestow.com/terms/)
+- [Contact](https://imagestow.com/contact/)

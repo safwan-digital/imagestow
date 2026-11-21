@@ -1,6 +1,6 @@
 # ImageStow — Free Image Tools, Private by Design
 
-**Live:** https://imagestow.safwan.digital/
+**Live:** https://imagestow.com/
 
 ImageStow is a complete image toolkit in the spirit of the classic online image suites — rebuilt with a clean, modern interface (light + dark mode) and one big difference:
 

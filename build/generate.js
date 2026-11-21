@@ -5,7 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const { CATS, TOOLS } = require("./tools-data");
 const ROOT = path.join(__dirname, "..");
-const BASE = "https://imagestow.safwan.digital";
+const BASE = "https://imagestow.com";
 const bySlug = Object.fromEntries(TOOLS.map(t => [t.slug, t]));
 
 const ICONS = {
@@ -76,7 +76,7 @@ ${ogUrl}
    Hostname gate: only ImageStow's real addresses report — local QA and test copies stay silent.
    These services count page visits and report errors only; images are processed in the browser and
    never sent anywhere. See /privacy/. */
-(function(){var OK={"imagestow.safwan.digital":1,"safwan-digital.github.io":1};if(!OK[location.hostname])return;
+(function(){var OK={"imagestow.com":1,"imagestow.safwan.digital":1,"safwan-digital.github.io":1};if(!OK[location.hostname])return;
 if(!/^https?:$/.test(location.protocol))return;
 function startAnalytics(){
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag("js",new Date());gtag("config","G-JVKBLYBEDG");
@@ -136,12 +136,12 @@ function renderGuide(g) {
 function footer(P) {
   const home = P === "" ? "./" : P;
   return `<footer class="site"><div class="wrap">
-<nav><a href="${home}">All tools</a><a href="${P}about/">About</a><a href="${P}privacy/">Privacy</a><a href="${P}terms/">Terms</a><a href="${P}contact/">Contact</a><a href="${P}sitemap.xml">Sitemap</a><a href="https://www.instagram.com/safwan.digital" target="_blank" rel="noopener">Instagram</a><a href="https://pdfstow.safwan.digital/">PDFStow — free PDF tools</a></nav>
+<nav><a href="${home}">All tools</a><a href="${P}about/">About</a><a href="${P}privacy/">Privacy</a><a href="${P}terms/">Terms</a><a href="${P}contact/">Contact</a><a href="${P}sitemap.xml">Sitemap</a><a href="https://www.instagram.com/safwan.digital" target="_blank" rel="noopener">Instagram</a><a href="https://pdfstow.com/">PDFStow — free PDF tools</a></nav>
 <div><strong>ImageStow</strong> — free image tools, private by design. Your files are processed in your browser and never uploaded.</div>
 <div>Built by <a href="https://safwan.digital">Safwan.Digital</a></div>
 </div></footer>
 <script src="${P}tools-data.js"></script>
-<script src="${P}app.js?v=120"></script>
+<script src="${P}app.js?v=130"></script>
 </body></html>`;
 }
 
@@ -279,7 +279,7 @@ ${sections}
 <section class="copy flush"><h2>Why your photos stay private here</h2>
 <p>Most free image sites make you upload your photo to their server before they will touch it. ImageStow does the work inside your browser instead — the same technology that shows you this page also compresses and converts your images. Close the tab and nothing remains. There is no account, no upload queue and no copy of your picture anywhere but your device.</p>
 <h2>The most-loved tools</h2>
-<p><a href="compress-to-size/">Compress to a Target Size</a> gets a photo under the 200 KB limit that forms and portals demand. <a href="heic-to-jpg/">HEIC to JPG</a> opens iPhone photos anywhere. <a href="remove-metadata/">Remove Photo Metadata</a> strips the hidden location data most people never knew their photos carried. And when a job needs a PDF instead, our sister site <a href="https://pdfstow.safwan.digital/">PDFStow</a> does it the same private way.</p></section>
+<p><a href="compress-to-size/">Compress to a Target Size</a> gets a photo under the 200 KB limit that forms and portals demand. <a href="heic-to-jpg/">HEIC to JPG</a> opens iPhone photos anywhere. <a href="remove-metadata/">Remove Photo Metadata</a> strips the hidden location data most people never knew their photos carried. And when a job needs a PDF instead, our sister site <a href="https://pdfstow.com/">PDFStow</a> does it the same private way.</p></section>
 </div>
 </main>
 ${footer(HPFX)}`;
@@ -333,7 +333,7 @@ write("about/index.html", prosePage("about", "About ImageStow — Free Image Too
 <h2>What is coming</h2>
 <p>A background remover is planned — the one popular tool ImageStow does not have yet. It needs a heavier model than the other tools use, and it will only be added when it can run privately in the browser, like everything else here. No date is promised; it ships when it works properly.</p>
 <h2>The Stow family</h2>
-<p>ImageStow's sister site is <a href="https://pdfstow.safwan.digital/">PDFStow</a>, free PDF tools built on the same rule: the work happens on your device, private by design.</p>
+<p>ImageStow's sister site is <a href="https://pdfstow.com/">PDFStow</a>, free PDF tools built on the same rule: the work happens on your device, private by design.</p>
 <p>Both are built by <a href="https://safwan.digital">Safwan.Digital</a>.</p>`));
 
 write("terms/index.html", prosePage("terms", "ImageStow Terms — Simple, Plain-Word Rules | ImageStow", "The simple terms for using ImageStow's free browser image tools: free for personal and business use, your files stay yours, results are yours to check.", "Terms, in plain words", `

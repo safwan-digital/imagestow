@@ -321,12 +321,58 @@ function wireShell(onFiles) {
     $("#result").classList.add("hidden"); $("#result").innerHTML = "";
     onFiles && onFiles(list);
   };
+  /* Bring an image in from anywhere: paste it (copied from any website or
+     app — the clipboard carries the real picture), or drop a link dragged
+     from another tab and let this page fetch that one image itself. A site
+     that protects its images refuses the fetch; the message then points to
+     the paste route, which always works. */
+  function dropImageUrl(dt) {
+    if (!dt) return null;
+    try {
+      const html = dt.getData("text/html");
+      if (html) { const m = html.match(/<img[^>]+src=["']([^"']+)["']/i); if (m && /^https?:\/\//i.test(m[1])) return m[1]; }
+    } catch (e) {}
+    try {
+      const uri = dt.getData("text/uri-list");
+      if (uri) { const line = uri.split(/\r?\n/).find(l => l && !l.startsWith("#")); if (line && /^https?:\/\//i.test(line.trim())) return line.trim(); }
+    } catch (e) {}
+    try {
+      const text = dt.getData("text/plain");
+      if (text && /^https?:\/\/\S+$/i.test(text.trim())) return text.trim();
+    } catch (e) {}
+    return null;
+  }
+  async function pickFromUrl(url) {
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error("fetch");
+      const blob = await resp.blob();
+      if (!blob.size) throw new Error("empty");
+      let name = "web-image";
+      try { name = decodeURIComponent(new URL(url).pathname.split("/").pop()) || name; } catch (e) {}
+      if (!/\.(jpe?g|png|webp|gif|bmp|avif|heic|heif|svg)$/i.test(name) && blob.type.startsWith("image/")) name += "." + blob.type.split("/")[1].replace("jpeg", "jpg").replace("svg+xml", "svg");
+      pick([new File([blob], name, { type: blob.type })]);
+    } catch (e) {
+      showError("That website protects its images, so this page could not fetch it. Right-click the image and choose Copy image, then paste it here (Ctrl+V) — that always works. Or save the image to your device and drop the file.");
+    }
+  }
   input.addEventListener("change", () => pick(input.files));
   drop.addEventListener("click", () => input.click());
   drop.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); input.click(); } });
   ["dragover", "dragenter"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
   ["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
-  drop.addEventListener("drop", e => pick(e.dataTransfer.files));
+  drop.addEventListener("drop", e => {
+    const dt = e.dataTransfer;
+    if (dt && dt.files && dt.files.length) { pick(dt.files); return; }
+    const url = dropImageUrl(dt);
+    if (url) pickFromUrl(url);
+  });
+  document.addEventListener("paste", e => {
+    const a = document.activeElement;
+    if (a && (a.tagName === "TEXTAREA" || (a.tagName === "INPUT" && /^(text|search|url|email|password|number|tel)$/.test(a.type || "")))) return;
+    const files = (e.clipboardData && e.clipboardData.files) || [];
+    if (files.length) { e.preventDefault(); pick(files); }
+  });
   return pick;
 }
 async function loadPreview(file) {

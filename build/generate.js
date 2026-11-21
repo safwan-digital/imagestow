@@ -42,7 +42,7 @@ function head(o, pfx) {
 <html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'${o.cspEval ? " 'unsafe-eval' 'wasm-unsafe-eval'" : ""} https://cdn.jsdelivr.net https://www.googletagmanager.com https://*.clarity.ms https://browser.sentry-cdn.com; style-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob: https://cdn.jsdelivr.net https://www.google-analytics.com https://*.google-analytics.com https://*.clarity.ms https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'${o.cspEval ? " 'unsafe-eval' 'wasm-unsafe-eval'" : ""} https://cdn.jsdelivr.net https://www.googletagmanager.com https://*.clarity.ms https://browser.sentry-cdn.com; style-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob: https: http: https://cdn.jsdelivr.net https://www.google-analytics.com https://*.google-analytics.com https://*.clarity.ms https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>${o.title}</title>
 <meta name="description" content="${o.meta}">
 ${robots}<meta name="theme-color" content="#1A365D">
@@ -60,7 +60,7 @@ ${ogUrl}
 <link rel="icon" href="${P}favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="${P}favicon-32.png">
 <link rel="apple-touch-icon" href="${P}apple-touch-icon.png">
-<link rel="stylesheet" href="${P}styles.css?v=130">
+<link rel="stylesheet" href="${P}styles.css?v=131">
 <script>try{var _t=localStorage.getItem('imagestow-theme');if(_t==='dark'||(_t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.dataset.theme='dark'}catch(e){}</script>
 <script>
 /* Analytics: Google Analytics (G-JVKBLYBEDG) + Microsoft Clarity (zfqhjlmxb3), ImageStow's own properties — never PDFStow's IDs.
@@ -141,7 +141,7 @@ function footer(P) {
 <div>Built by <a href="https://safwan.digital">Safwan.Digital</a></div>
 </div></footer>
 <script src="${P}tools-data.js"></script>
-<script src="${P}app.js?v=130"></script>
+<script src="${P}app.js?v=131"></script>
 </body></html>`;
 }
 
@@ -235,7 +235,7 @@ ${header(HPFX)}
 <div class="wrap"><div class="tool-shell">
 <div class="drop" id="dropZone" role="button" tabindex="0" aria-label="Choose an image">
 <span class="big">Tap to choose ${t.multiple ? "images" : "an image"}, or drop ${t.multiple ? "them" : "it"} here</span>
-<span class="small">Your file stays on your device — it is never uploaded.</span>
+<span class="small">You can also paste an image (Ctrl+V), or drag one in from another tab. Your file stays on your device — it is never uploaded.</span>
 <input type="file" id="fileInput" accept="${t.accept}"${t.multiple ? " multiple" : ""}>
 </div>
 <div class="work hidden" id="workArea">

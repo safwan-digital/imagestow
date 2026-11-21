@@ -326,11 +326,58 @@ function wireShell(onFiles) {
      from another tab and let this page fetch that one image itself. A site
      that protects its images refuses the fetch; the message then points to
      the paste route, which always works. */
+  function largestSrcsetUrl(srcset) {
+    if (!srcset) return null;
+    let best = null, bestW = -1;
+    String(srcset).split(",").forEach(part => {
+      const t = part.trim().split(/\s+/);
+      if (!t[0]) return;
+      const d = t[1] || "";
+      const w = d.endsWith("w") ? parseFloat(d) : d.endsWith("x") ? parseFloat(d) * 1000 : 0;
+      if (w > bestW) { bestW = w; best = t[0]; }
+    });
+    return best;
+  }
+  /* Candidate addresses for one image URL, best first: shops derive the
+     displayed copy's name from the original's (WordPress/WooCommerce
+     -<W>x<H> or -scaled, Shopify _<W>x<H> / _<W>x, Jetpack Photon ?w=), so
+     the stripped address is tried first and the given address stays as the
+     fallback. Converting the displayed copy would bake its small size into
+     the result — the blur this guards against. */
+  function upgradeUrlCandidates(url) {
+    const out = [];
+    try {
+      const u = new URL(url);
+      const file = u.pathname.split("/").pop() || "";
+      const m = file.match(/^(.*?)(?:[-_]\d+x\d+|[-_]\d+x|[-_]scaled)(\.(?:jpe?g|png|webp|avif|gif))$/i);
+      if (m) out.push(u.origin + u.pathname.slice(0, u.pathname.length - file.length) + m[1] + m[2]);
+      if (u.search && /[?&](w|h|resize|fit)=/.test(u.search)) {
+        const clean = new URL(url);
+        ["w", "h", "resize", "fit"].forEach(k => clean.searchParams.delete(k));
+        out.push(clean.href);
+      }
+    } catch (e) {}
+    out.push(url);
+    return [...new Set(out)];
+  }
   function dropImageUrl(dt) {
     if (!dt) return null;
     try {
       const html = dt.getData("text/html");
-      if (html) { const m = html.match(/<img[^>]+src=["']([^"']+)["']/i); if (m && /^https?:\/\//i.test(m[1])) return m[1]; }
+      if (html) {
+        /* The full-size original first: a link wrapping the image and
+           pointing at an image file (the shop lightbox pattern), or the
+           largest srcset entry. The plain src is the displayed copy. */
+        const am = html.match(/<a[^>]+href=["']([^"']+\.(?:jpe?g|png|webp|avif|gif|bmp|svg)(?:[?#][^"']*)?)["']/i);
+        if (am && /^https?:\/\//i.test(am[1])) return am[1];
+        const tag = html.match(/<img[^>]*>/i);
+        if (tag) {
+          const ss = tag[0].match(/srcset=["']([^"']+)["']/i);
+          if (ss) { const big = largestSrcsetUrl(ss[1]); if (big && /^https?:\/\//i.test(big)) return big; }
+          const m = tag[0].match(/src=["']([^"']+)["']/i);
+          if (m && /^https?:\/\//i.test(m[1])) return m[1];
+        }
+      }
     } catch (e) {}
     try {
       const uri = dt.getData("text/uri-list");
@@ -344,12 +391,19 @@ function wireShell(onFiles) {
   }
   async function pickFromUrl(url) {
     try {
-      const resp = await fetch(url);
-      if (!resp.ok) throw new Error("fetch");
-      const blob = await resp.blob();
-      if (!blob.size) throw new Error("empty");
+      let blob = null, usedUrl = url;
+      for (const candidate of upgradeUrlCandidates(url)) {
+        try {
+          const resp = await fetch(candidate);
+          if (!resp.ok) continue;
+          const b = await resp.blob();
+          if (!b.size) continue;
+          blob = b; usedUrl = candidate; break;
+        } catch (e) { /* try the next candidate */ }
+      }
+      if (!blob) throw new Error("fetch");
       let name = "web-image";
-      try { name = decodeURIComponent(new URL(url).pathname.split("/").pop()) || name; } catch (e) {}
+      try { name = decodeURIComponent(new URL(usedUrl).pathname.split("/").pop()) || name; } catch (e) {}
       if (!/\.(jpe?g|png|webp|gif|bmp|avif|heic|heif|svg)$/i.test(name) && blob.type.startsWith("image/")) name += "." + blob.type.split("/")[1].replace("jpeg", "jpg").replace("svg+xml", "svg");
       pick([new File([blob], name, { type: blob.type })]);
     } catch (e) {

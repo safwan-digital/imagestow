@@ -33,3 +33,4 @@ Files are processed in-memory in your browser tab and discarded when you close i
 ## 📄 License
 
 MIT © Safwan Digital
+

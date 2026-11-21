@@ -60,7 +60,7 @@ ${ogUrl}
 <link rel="icon" href="${P}favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="${P}favicon-32.png">
 <link rel="apple-touch-icon" href="${P}apple-touch-icon.png">
-<link rel="stylesheet" href="${P}styles.css?v=120">
+<link rel="stylesheet" href="${P}styles.css?v=130">
 <script>try{var _t=localStorage.getItem('imagestow-theme');if(_t==='dark'||(_t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.dataset.theme='dark'}catch(e){}</script>
 <script>
 /* Analytics: Google Analytics (G-JVKBLYBEDG) + Microsoft Clarity (zfqhjlmxb3), ImageStow's own properties — never PDFStow's IDs.
@@ -126,10 +126,17 @@ function header(P) {
 <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode"><svg class="tb-ico ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg><svg class="tb-ico ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg><span class="tb-label">Dark</span></button></nav>
 </div></header>`;
 }
+function renderGuide(g) {
+  if (!g) return "";
+  return g.map(s => `<h2>${s.h}</h2>` + s.blocks.map(b =>
+    b[0] === "p" ? `<p>${b[1]}</p>` :
+    b[0] === "ul" ? `<ul>${b[1].map(i => `<li>${i}</li>`).join("")}</ul>` : ""
+  ).join("")).join("\n");
+}
 function footer(P) {
   const home = P === "" ? "./" : P;
   return `<footer class="site"><div class="wrap">
-<nav><a href="${home}">All tools</a><a href="${P}about/">About</a><a href="${P}privacy/">Privacy</a><a href="${P}terms/">Terms</a><a href="${P}contact/">Contact</a><a href="https://pdfstow.safwan.digital/">PDFStow — free PDF tools</a></nav>
+<nav><a href="${home}">All tools</a><a href="${P}about/">About</a><a href="${P}privacy/">Privacy</a><a href="${P}terms/">Terms</a><a href="${P}contact/">Contact</a><a href="${P}sitemap.xml">Sitemap</a><a href="https://www.instagram.com/safwan.digital" target="_blank" rel="noopener">Instagram</a><a href="https://pdfstow.safwan.digital/">PDFStow — free PDF tools</a></nav>
 <div><strong>ImageStow</strong> — free image tools, private by design. Your files are processed in your browser and never uploaded.</div>
 <div>Built by <a href="https://safwan.digital">Safwan.Digital</a></div>
 </div></footer>
@@ -238,7 +245,7 @@ ${header(HPFX)}
 </div>
 <div class="result hidden" id="result" aria-live="polite"></div>
 </div></div>
-<section class="copy"><h2>${t.howto}</h2>
+<section class="copy">${renderGuide(t.guide)}<h2>${t.howto}</h2>
 <ol class="steps">${t.steps.map(s => "<li>" + s + "</li>").join("")}</ol>
 <h2>Questions</h2><div class="faq">
 ${t.faqs.map(f => "<details><summary>" + f[0] + "</summary><p>" + f[1] + "</p></details>").join("\n")}
@@ -314,11 +321,17 @@ write("privacy/index.html", prosePage("privacy", "Privacy — How ImageStow Hand
 <p>If a tool breaks in your browser, a service called <strong>Sentry</strong> sends us a short technical report about the error itself, so we can fix it: what kind of error happened, the page it happened on, and the kind of browser. Before anything is sent, the report is cleaned in your browser — web addresses are stripped of everything after the question mark, request headers and any user details are removed, and no personal data is sent. <strong>Your images are never part of an error report either</strong> — no picture, no file contents, no file name. Like the visit counters, error reporting only starts once you first interact with the page, or shortly after it has finished loading.</p>
 <h2>When you close the tab</h2>
 <p>The images you were working on are gone with it. Your downloads are yours — check them before sharing, because a downloaded copy carries whatever you put in it.</p>
-<p>Questions? Write to <a href="mailto:mail@safwan.digital">mail@safwan.digital</a>.</p>`));
+<p>Questions? Write to <a href="mailto:info@safwan.digital">info@safwan.digital</a>.</p>`));
 
 write("about/index.html", prosePage("about", "About ImageStow — Free Image Tools by Safwan.Digital", "ImageStow is a free set of image tools by Safwan.Digital that runs entirely in your browser — compress, resize, convert and edit with nothing uploaded.", "About ImageStow", `
 <p>ImageStow is a free set of image tools that runs entirely in your browser: compress, resize, convert, edit and clean up images without uploading them anywhere.</p>
 <p>It was built because the popular free tools all ask for the same thing — your photo, uploaded to their server, often with a batch limit or a sign-up wall. Your photos are personal. A picture of your ID, your product, your family should not need a trip to a stranger's server just to make it smaller.</p>
+<h2>What you can do here</h2>
+<p>There are 25 tools in four groups. Convert changes a picture from one format to another — including iPhone HEIC photos opened as normal JPGs, and a set of images packed into one PDF. Compress and Resize make a file smaller in weight or in pixels, down to an exact target size when a form demands one. Edit covers the everyday fixes: crop, rotate, a watermark with your own words, and blurring the parts a photo should not show. Privacy and Utility starts with the tools most people did not know they needed — seeing the hidden camera and location details inside a photo, and removing them before you share it.</p>
+<h2>How it works</h2>
+<p>There is no server doing the work. When you pick a file, your own browser reads it, the tool runs in the page, and the result comes back to you as a download. Close the tab and the picture is gone from the page's memory. That design has honest limits: a browser cannot read every rare file variant — a few kinds of HEIC photo are the known example — and very large files depend on how much memory your device has. When a tool here cannot do something, it says so plainly instead of pretending.</p>
+<h2>What is coming</h2>
+<p>A background remover is planned — the one popular tool ImageStow does not have yet. It needs a heavier model than the other tools use, and it will only be added when it can run privately in the browser, like everything else here. No date is promised; it ships when it works properly.</p>
 <h2>The Stow family</h2>
 <p>ImageStow's sister site is <a href="https://pdfstow.safwan.digital/">PDFStow</a>, free PDF tools built on the same rule: the work happens on your device, private by design.</p>
 <p>Both are built by <a href="https://safwan.digital">Safwan.Digital</a>.</p>`));
@@ -329,12 +342,21 @@ write("terms/index.html", prosePage("terms", "ImageStow Terms — Simple, Plain-
 <p>Your images never leave your device, so we never see them and cannot recover them. Keep your own copies of anything important. Check a result before you rely on it — for official documents, like passport photos, the issuing authority's rules decide what is accepted, and this site can only get the size and format right.</p>
 <h2>No promises we cannot keep</h2>
 <p>The tools are provided as they are, without a warranty. Browsers differ, and a rare file may not convert — the tool will tell you plainly when that happens. We may improve, add or remove tools over time.</p>
-<p>Questions? <a href="mailto:mail@safwan.digital">mail@safwan.digital</a>.</p>`));
+<p>Questions? <a href="mailto:info@safwan.digital">info@safwan.digital</a>.</p>`));
 
 write("contact/index.html", prosePage("contact", "Contact ImageStow — Questions & Feedback | ImageStow", "Contact ImageStow and Safwan.Digital by email — tell us which tool you used and what happened, and we will take a look. Please do not email images.", "Contact", `
 <p>The fastest way to reach us is email:</p>
-<p class="bigmail"><a href="mailto:mail@safwan.digital"><strong>mail@safwan.digital</strong></a></p>
+<p class="bigmail"><a href="mailto:info@safwan.digital"><strong>info@safwan.digital</strong></a></p>
 <p>Tell us which tool you used and what happened, and we will take a look. Please do not email us your images — the tools run in your browser precisely so your files never have to travel.</p>
+<h2>Send a message</h2>
+<form id="contactForm">
+<div class="ctl"><label for="cfName">Your name</label><input id="cfName" name="name" type="text" autocomplete="name"></div>
+<div class="ctl"><label for="cfSubject">Subject</label><input id="cfSubject" name="subject" type="text" required></div>
+<div class="ctl"><label for="cfMessage">Message</label><textarea id="cfMessage" name="message" rows="5" required></textarea></div>
+<p><button class="btn" type="submit">Open in your email app</button></p>
+<p>This form stores nothing and sends nothing by itself. Pressing the button opens your own email app with a draft addressed to info@safwan.digital, ready for you to review and send.</p>
+</form>
+<script>document.getElementById('contactForm').addEventListener('submit',function(e){e.preventDefault();var f=e.target;var body=(f.name.value?('Name: '+f.name.value+'\\n\\n'):'')+f.message.value;location.href='mailto:info@safwan.digital?subject='+encodeURIComponent(f.subject.value)+'&body='+encodeURIComponent(body)});</script>
 <p>ImageStow is built by <a href="https://safwan.digital">Safwan.Digital</a>.</p>`));
 
 write("404.html", head({ title: "Page not found — ImageStow", meta: "That page does not exist. Browse all free ImageStow tools instead.", url: BASE + "/404.html", noindex: true, noCanonical: true }, "/") + `

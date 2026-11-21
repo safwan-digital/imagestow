@@ -68,7 +68,8 @@ header.site nav a:hover{color:var(--ink)}
 .ctl label{display:block;font-weight:700;font-size:var(--fs-3);margin-bottom:6px}
 .ctl .val{color:var(--accent);font-weight:700}
 .ctl input[type=range]{width:100%;accent-color:var(--accent3);min-height:44px}
-.ctl input[type=text],.ctl input[type=number],.ctl select{width:100%;min-height:46px;border-radius:var(--r-sm);border:1px solid var(--card-stroke);background:var(--card-solid);color:var(--ink);font-size:var(--fs-4);padding:8px 12px}
+.ctl input[type=text],.ctl input[type=number],.ctl select,.ctl textarea{width:100%;min-height:46px;border-radius:var(--r-sm);border:1px solid var(--card-stroke);background:var(--card-solid);color:var(--ink);font-size:var(--fs-4);padding:8px 12px}
+.ctl textarea{min-height:120px;resize:vertical}
 .ctl input[type=color]{width:70px;height:44px;border:1px solid var(--card-stroke);border-radius:var(--r-sm);background:var(--card-solid);padding:4px}
 .ctl-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:560px){.ctl-row{grid-template-columns:1fr}}

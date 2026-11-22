@@ -309,6 +309,17 @@ function statsHtml(items) {
 function wireShell(onFiles) {
   const input = $("#fileInput"), drop = $("#dropZone");
   if (!input) return;
+  const rmBtn = $("#removeBtn");
+  if (rmBtn) rmBtn.addEventListener("click", () => {
+    state.files = []; state.extra = {};
+    if (state.url) URL.revokeObjectURL(state.url);
+    state.img = null; state.url = null;
+    input.value = "";
+    const pv = $("#previewImg"); if (pv) pv.removeAttribute("src");
+    const st = $("#stage"); if (st) { const cx = st.getContext("2d"); if (cx) cx.clearRect(0, 0, st.width, st.height); }
+    const rs = $("#result"); if (rs) { rs.classList.add("hidden"); rs.innerHTML = ""; }
+    const wa = $("#workArea"); if (wa) wa.classList.add("hidden");
+  });
   const pick = files => {
     const list = Array.from(files || []).filter(f => f && (f.type.startsWith("image/") || /\.(jpe?g|png|webp|gif|bmp|avif|heic|heif|svg)$/i.test(f.name)));
     if (!list.length) { showError("That is not an image file. Pick a JPG, PNG, WebP, GIF, SVG or HEIC image."); return; }
@@ -925,6 +936,14 @@ const IMPL = {
     $("#rotR").addEventListener("click", () => { ed.angle += 90; drawPreview(); });
     $("#flipH").addEventListener("click", () => { ed.flipH = !ed.flipH; drawPreview(); });
     $("#flipV").addEventListener("click", () => { ed.flipV = !ed.flipV; drawPreview(); });
+    const resetEditsBtn = $("#resetEdits");
+    if (resetEditsBtn) resetEditsBtn.addEventListener("click", () => {
+      ed.angle = 0; ed.flipH = false; ed.flipV = false;
+      [["bright", "100"], ["contrast", "100"], ["sat", "100"]].forEach(([id, v]) => { const el = $("#" + id); if (el) { el.value = v; const lab = $("#" + id + "Val"); if (lab) lab.textContent = v + "%"; } });
+      const setV = (sel, v) => { const el = $(sel); if (el) el.value = v; };
+      setV("#filter", "none"); setV("#cropratio", "free"); setV("#text", ""); setV("#textsize", "6"); setV("#textcolor", "#ffffff"); setV("#textpos", "bottom-center");
+      drawPreview();
+    });
     $("#runBtn").addEventListener("click", async e => {
       const btn = e.currentTarget;
       if (!state.img) return showError("Pick an image first.");

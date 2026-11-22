@@ -123,3 +123,5 @@ footer.site a:hover{color:var(--ink)}
 .prose h1{font-size:clamp(30px,5vw,44px);letter-spacing:-.02em}
 .prose h2{font-size:var(--fs-6);margin-top:30px}
 .prose p,.prose li{color:var(--muted);line-height:1.7;font-size:var(--fs-4)}
+
+.filebar .fremove{margin-left:auto;background:var(--card-solid);border:1px solid var(--card-stroke);color:var(--ink);border-radius:var(--r-pill);padding:7px 14px;font-size:var(--fs-2);font-weight:600;cursor:pointer;min-height:36px}

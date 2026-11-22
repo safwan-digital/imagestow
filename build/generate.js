@@ -60,7 +60,7 @@ ${ogUrl}
 <link rel="icon" href="${P}favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="${P}favicon-32.png">
 <link rel="apple-touch-icon" href="${P}apple-touch-icon.png">
-<link rel="stylesheet" href="${P}styles.css?v=132">
+<link rel="stylesheet" href="${P}styles.css?v=133">
 <script>try{var _t=localStorage.getItem('imagestow-theme');if(_t==='dark'||(_t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.dataset.theme='dark'}catch(e){}</script>
 <script>
 /* Analytics: Google Analytics (G-JVKBLYBEDG) + Microsoft Clarity (zfqhjlmxb3), ImageStow's own properties — never PDFStow's IDs.
@@ -141,7 +141,7 @@ function footer(P) {
 <div>Built by <a href="https://safwan.digital">Safwan.Digital</a></div>
 </div></footer>
 <script src="${P}tools-data.js"></script>
-<script src="${P}app.js?v=132"></script>
+<script src="${P}app.js?v=133"></script>
 </body></html>`;
 }
 
@@ -191,7 +191,7 @@ const CONTROLS = {
 <div class="ctl"><label for="textsize">Text size</label><input type="range" id="textsize" min="3" max="14" value="6"></div></div>
 <div class="ctl-row"><div class="ctl"><label for="textcolor">Text colour</label><select id="textcolor"><option value="#ffffff">White</option><option value="#13233c">Midnight</option><option value="#c5a059">Gold</option><option value="#000000">Black</option></select></div>
 <div class="ctl"><label for="textpos">Text position</label><select id="textpos"><option value="bottom-center">Bottom centre</option><option value="top-center">Top centre</option><option value="middle-center">Middle</option><option value="bottom-left">Bottom left</option><option value="bottom-right">Bottom right</option></select></div></div>
-<button class="btn" id="runBtn">Download edited image</button>`,
+<div class="btn-row"><button class="btn secondary" id="resetEdits" type="button">Reset all edits</button><button class="btn" id="runBtn">Download edited image</button></div>`,
   crop: () => `<p class="note">Drag on the picture to draw the box. Drag inside it to move it; drag the gold corner to resize it.</p><button class="btn" id="runBtn">Crop &amp; download</button>`,
   rotate: () => `<div class="btn-row mb14"><button class="btn secondary" id="rotL" type="button">⟲ Turn left</button><button class="btn secondary" id="rotR" type="button">⟳ Turn right</button><button class="btn secondary" id="flipH" type="button">Flip ↔</button><button class="btn secondary" id="flipV" type="button">Flip ↕</button></div><button class="btn" id="runBtn">Download fixed image</button>`,
   watermark: () => `<div class="ctl"><label for="wmtext">Watermark words</label><input type="text" id="wmtext" placeholder="e.g. @yourshop or Your Name" maxlength="60"></div>
@@ -239,7 +239,7 @@ ${header(HPFX)}
 <input type="file" id="fileInput" accept="${t.accept}"${t.multiple ? " multiple" : ""}>
 </div>
 <div class="work hidden" id="workArea">
-<div class="filebar"><span class="fname" id="fileName"></span><span class="fmeta" id="fileMeta"></span></div>
+<div class="filebar"><span class="fname" id="fileName"></span><span class="fmeta" id="fileMeta"></span><button type="button" class="fremove" id="removeBtn">✕ Remove</button></div>
 <div class="preview">${preview}</div>
 <div class="controls">${CONTROLS[t.ui](t)}</div>
 </div>

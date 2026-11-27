@@ -234,8 +234,8 @@ function toolPage(t) {
 <body data-tool="${t.slug}">
 ${header(HPFX)}
 <main>
-<div class="tool-head"><span class="pill">Free · No sign-up · Nothing uploaded</span>
-<h1>${t.name}</h1><p>${t.answer}</p></div>
+<div class="tool-head">
+<h1>${t.name}</h1><p class="freeline">Free · No sign-up · Nothing uploaded</p><p>${t.answer}</p></div>
 <div class="wrap"><div class="tool-shell">
 <div class="drop" id="dropZone" role="button" tabindex="0" aria-label="Choose an image">
 <span class="big">Tap to choose ${t.multiple ? "images" : "an image"}, or drop ${t.multiple ? "them" : "it"} here</span>
@@ -274,7 +274,7 @@ function homePage() {
 ${header(HPFX)}
 <main>
 <div class="hero">
-<h1>Image tools that keep<br>your photos <em>yours.</em></h1>
+<h1>Image tools that keep<br>your photos <em>yours.</em></h1><p class="freeline">Free · No sign-up · Nothing uploaded</p>
 <p>Compress, resize, convert and edit images right in your browser. Your files are never uploaded — everything happens on your device.</p>
 <div class="search-wrap"><input type="search" id="toolSearch" placeholder="Search tools — try “shrink to 200kb” or “iphone photo”" aria-label="Search tools"><div class="search-results hidden" id="searchResults"></div></div>
 </div>

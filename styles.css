@@ -24,7 +24,7 @@ header.site nav a:hover{color:var(--ink)}
 .hero h1{font-size:var(--fs-hero);line-height:1.04;letter-spacing:-.03em;margin:0 0 14px}
 .hero h1 em{font-style:normal;background:var(--em-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero p{font-size:var(--fs-lede);color:var(--muted);max-width:640px;margin:0 auto 8px}
-.pill{display:inline-block;font-size:var(--fs-2);font-weight:700;padding:6px 14px;border-radius:var(--r-pill);background:rgba(var(--acc-rgb),.16);border:1px solid rgba(var(--acc-rgb),.45);margin-bottom:18px}
+.hero .freeline,.tool-head .freeline{font-size:var(--fs-2);color:var(--muted);margin:8px auto 0}
 .search-wrap{max-width:560px;margin:26px auto 6px;position:relative}
 .search-wrap input{width:100%;min-height:54px;border-radius:var(--r-pill);border:1px solid var(--card-stroke);background:var(--card-solid);color:var(--ink);font-size:var(--fs-4);padding:0 22px;box-shadow:var(--shadow)}
 .search-wrap input::placeholder{color:var(--muted)}

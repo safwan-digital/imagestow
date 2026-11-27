@@ -44,6 +44,32 @@ function extOf(name) { const m = /\.([a-z0-9]+)$/i.exec(name || ""); return m ? 
 function baseOf(name) { const b = (name || "image").replace(/\.[a-z0-9]+$/i, "").replace(/[^a-z0-9-_]+/gi, "-").replace(/^-+|-+$/g, "").slice(0, 100).replace(/-+$/g, ""); return b || "image"; }
 function outName(file, suffix, ext) { return "imagestow-" + baseOf(file && file.name) + (suffix ? "-" + baseOf(suffix) : "") + "." + ext; }
 function mimeExt(mime) { return { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" }[mime] || "png"; }
+/* Read a file's real format from its first bytes. The file's name and the type it
+   claims can both be wrong; the contents cannot. Mirrors the extension's detection. */
+async function sniffFormat(file) {
+  try {
+    const buf = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+    const asc = (a, b) => Array.from(buf.slice(a, b)).map(c => String.fromCharCode(c)).join("");
+    if (buf[0] === 0xFF && buf[1] === 0xD8) return "JPG";
+    if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4E && buf[3] === 0x47) return "PNG";
+    if (asc(0, 4) === "RIFF" && asc(8, 12) === "WEBP") return "WebP";
+    if (asc(0, 3) === "GIF") return "GIF";
+    if (asc(0, 2) === "BM") return "BMP";
+    if (asc(4, 8) === "ftyp") {
+      const brand = asc(8, 12);
+      if (brand.startsWith("avif") || brand.startsWith("avis")) return "AVIF";
+      if (["heic", "heix", "hevc", "mif1", "msf1", "heim", "heis"].includes(brand)) return "HEIC";
+      return "HEIC or AVIF";
+    }
+    if ((buf[0] === 0x49 && buf[1] === 0x49 && buf[2] === 0x2A && buf[3] === 0x00) || (buf[0] === 0x4D && buf[1] === 0x4D && buf[2] === 0x00 && buf[3] === 0x2A)) return "TIFF";
+    const head = asc(0, 16).trimStart();
+    if (head.startsWith("<svg") || head.startsWith("<?xml")) return "SVG";
+    return null;
+  } catch (e) { return null; }
+}
+function isHeicFile(file) {
+  return /image\/hei[cf]/i.test((file && file.type) || "") || /\.(heic|heif)$/i.test((file && file.name) || "");
+}
 function loadScriptOnce(src) {
   return new Promise((res, rej) => {
     if (document.querySelector('script[src="' + src + '"]')) {
@@ -640,6 +666,95 @@ function traceConvert() {
 }
 
 const IMPL = {
+  /* ----- homepage universal converter ----- */
+  "home-convert": () => {
+    const fmtSel = $("#outFormat"), btn = $("#runBtn");
+    wireShell(async files => {
+      const f = files[0];
+      const line = $("#detectLine");
+      const fmt = await sniffFormat(f);
+      if (isHeicFile(f)) {
+        try {
+          if (line) line.textContent = "Real format: HEIC — reading it with the HEIC reader…";
+          await loadScriptOnce(CDN.heic);
+          if (!window.heic2any) throw new Error("The HEIC reader did not load.");
+          let out = await window.heic2any({ blob: f, toType: "image/jpeg", quality: 0.92 });
+          if (Array.isArray(out)) out = out[0];
+          const got = await fileToImage(new File([out], "x.jpg", { type: "image/jpeg" }));
+          if (state.url) URL.revokeObjectURL(state.url);
+          state.img = got.img; state.url = got.url;
+          const pv = $("#previewImg"); if (pv) pv.src = got.url;
+          if (line) line.textContent = "Real format: HEIC · " + got.img.naturalWidth + " × " + got.img.naturalHeight + " pixels · " + fmtBytes(f.size);
+        } catch (e) {
+          const w = $("#workArea"); if (w) w.classList.add("hidden");
+          showError("We could not read this HEIC photo in your browser. Some HEIC photos (like Live Photos) cannot be read here. Save the photo as JPG in your phone's Photos app and convert that instead.");
+        }
+        return;
+      }
+      try {
+        const img = await loadPreview(f);
+        if (line) line.textContent = (fmt ? "Real format: " + fmt : "Format: " + (f.type || "image")) + " · " + img.naturalWidth + " × " + img.naturalHeight + " pixels · " + fmtBytes(f.size);
+      } catch (e) { showError(e.message); }
+    });
+    function syncCtls() {
+      const v = fmtSel.value;
+      $("#qualityWrap").classList.toggle("hidden", !(v === "image/jpeg" || v === "image/webp"));
+      $("#coloursWrap").classList.toggle("hidden", v !== "image/svg+xml");
+      btn.textContent = "Convert to " + fmtSel.selectedOptions[0].textContent.replace(/ — .*$/, "");
+    }
+    fmtSel.addEventListener("change", syncCtls); syncCtls();
+    const q = $("#quality"), qv = $("#qualityVal");
+    if (q && qv) q.addEventListener("input", () => qv.textContent = q.value + "%");
+    const cEl = $("#colours"), cv = $("#coloursVal");
+    if (cEl && cv) cEl.addEventListener("input", () => cv.textContent = cEl.value);
+    btn.addEventListener("click", async () => {
+      if (!state.img) return showError("Pick an image first.");
+      const fmt = fmtSel.value, f = state.files[0];
+      const label = fmtSel.selectedOptions[0].textContent.replace(/ — .*$/, "");
+      busy(btn, true);
+      try {
+        let blob, name;
+        const items = [["Before", fmtBytes(f.size)]];
+        if (fmt === "image/svg+xml") {
+          await loadScriptOnce(localLib("imagetracer_v1.2.6.js"));
+          if (!window.ImageTracer) throw new Error("The tracing library did not load. Reload the page and try again.");
+          busy(btn, true, "Tracing… big pictures can take a few seconds.");
+          await new Promise(r => setTimeout(r, 40)); // let the busy label paint before the tracer takes the thread
+          const colours = Math.min(32, Math.max(2, Math.round(num("#colours", 16))));
+          const svg = traceImage(state.img, colours);
+          blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+          name = outName(f, "", "svg");
+          items.push(["SVG file", fmtBytes(blob.size)], ["Shapes drawn", String((svg.match(/<path/g) || []).length)], ["Colours", String(colours)]);
+        } else if (fmt === "application/pdf") {
+          await loadScriptOnce(CDN.pdf);
+          if (!window.PDFLib) throw new Error("The PDF library did not load. Check your connection and try again.");
+          busy(btn, true, "Making your PDF…");
+          const { PDFDocument } = window.PDFLib;
+          const doc = await PDFDocument.create();
+          let emb, dims;
+          if (f.type === "image/png" && !isHeicFile(f)) {
+            emb = await doc.embedPng(new Uint8Array(await f.arrayBuffer())); dims = emb.scale(1);
+          } else {
+            const jb = await encodeImage(state.img, { type: "image/jpeg", q: 0.92 });
+            emb = await doc.embedJpg(new Uint8Array(await jb.arrayBuffer())); dims = emb.scale(1);
+          }
+          const page = doc.addPage([dims.width * 0.75, dims.height * 0.75]);
+          page.drawImage(emb, { x: 0, y: 0, width: dims.width * 0.75, height: dims.height * 0.75 });
+          blob = new Blob([await doc.save()], { type: "application/pdf" });
+          name = outName(f, "", "pdf");
+          items.push(["PDF file", fmtBytes(blob.size)], ["Pages", "1"]);
+        } else {
+          blob = await encodeImage(state.img, { type: fmt, q: num("#quality", 92) / 100, bg: fmt === "image/jpeg" ? "#ffffff" : undefined });
+          name = outName(f, "", mimeExt(fmt));
+          items.push(["After (" + label + ")", fmtBytes(blob.size)], ["Size", state.img.naturalWidth + " × " + state.img.naturalHeight]);
+        }
+        const r = resultBox(statsHtml(items));
+        r.appendChild(dlButton(blob, name));
+      } catch (e) { showError(e.message || "Something went wrong converting that image."); }
+      busy(btn, false);
+    });
+  },
+
   /* ----- convert family ----- */
   "jpg-to-png": () => simpleConvert("image/png"),
   "png-to-jpg": () => simpleConvert("image/jpeg"),
@@ -1425,5 +1540,5 @@ window.IS = {
   version: "1.0.0",
   parseJpegExif, stripJpegMetadata, readMetadata, metadataRows, hasHiddenMetadata,
   loadImage, fileToImage, encodeImage, encodeAtScale, compressToTarget, canvasBlob, makeCanvas, fmtBytes,
-  traceImage, localLib
+  traceImage, localLib, sniffFormat, isHeicFile
 };

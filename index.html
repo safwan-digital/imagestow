@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.googletagmanager.com https://*.clarity.ms https://browser.sentry-cdn.com; style-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob: https: http: https://cdn.jsdelivr.net https://www.google-analytics.com https://*.google-analytics.com https://*.clarity.ms https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://cdn.jsdelivr.net https://www.googletagmanager.com https://*.clarity.ms https://browser.sentry-cdn.com; style-src 'self'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob: https: http: https://cdn.jsdelivr.net https://www.google-analytics.com https://*.google-analytics.com https://*.clarity.ms https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>ImageStow — Free Image Tools Online, Private by Design</title>
 <meta name="description" content="Free image tools — compress, resize, convert, edit and clean images right in your browser. Private by design: files never leave your device. No sign-up.">
 <meta name="theme-color" content="#1A365D">
@@ -22,7 +22,7 @@
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="stylesheet" href="styles.css?v=140">
+<link rel="stylesheet" href="styles.css?v=150">
 <script>try{var _t=localStorage.getItem('imagestow-theme');if(_t==='dark'||(_t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.dataset.theme='dark'}catch(e){}</script>
 <script>
 /* Analytics: Google Analytics (G-JVKBLYBEDG) + Microsoft Clarity (zfqhjlmxb3), ImageStow's own properties — never PDFStow's IDs.
@@ -79,18 +79,39 @@ if(document.readyState==="complete")idle();else window.addEventListener("load",i
 </script>
 <script type="application/ld+json">[{"@context":"https://schema.org","@type":"SoftwareApplication","name":"ImageStow","url":"https://imagestow.com/","applicationCategory":"MultimediaApplication","operatingSystem":"Any (web browser)","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free image tools — compress, resize, convert and edit images right in your browser. Private by design: files never leave your device. No sign-up.","publisher":{"@type":"Organization","name":"Safwan.Digital","url":"https://safwan.digital"}}]</script>
 </head>
-<body>
+<body data-tool="home-convert">
 <header class="site"><div class="wrap">
 <a class="logo" href="./"><img src="logo-68.png" alt="" width="34" height="34"><span class="wordmark">Image<span class="stow">Stow</span></span></a>
 <nav><a href="#tools">All tools</a><a class="nav-extra" href="compress-image/">Compress</a><a class="nav-extra" href="heic-to-jpg/">HEIC to JPG</a><a href="about/">About</a><a href="privacy/">Privacy</a>
 <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode"><svg class="tb-ico ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg><svg class="tb-ico ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg><span class="tb-label">Dark</span></button></nav>
 </div></header>
 <main>
-<div class="hero"><span class="pill">Free · No sign-up · Nothing uploaded</span>
+<div class="hero">
 <h1>Image tools that keep<br>your photos <em>yours.</em></h1>
 <p>Compress, resize, convert and edit images right in your browser. Your files are never uploaded — everything happens on your device.</p>
 <div class="search-wrap"><input type="search" id="toolSearch" placeholder="Search tools — try “shrink to 200kb” or “iphone photo”" aria-label="Search tools"><div class="search-results hidden" id="searchResults"></div></div>
 </div>
+<div class="wrap"><div class="tool-shell">
+<h2>Convert an image, right here</h2>
+<p class="note hc-sub">Add any image — the tool reads the file itself to work out what it really is, then makes the format you need. JPG, PNG, WebP, PDF, or an SVG traced from your picture.</p>
+<div class="drop" id="dropZone" role="button" tabindex="0" aria-label="Choose an image">
+<span class="big">Tap to choose an image, or drop it here</span>
+<span class="small">You can also paste an image (Ctrl+V), or drag one in from another tab. Your file stays on your device — it is never uploaded.</span>
+<input type="file" id="fileInput" accept="image/*,.heic,.heif">
+</div>
+<div class="work hidden" id="workArea">
+<div class="filebar"><span class="fname" id="fileName"></span><span class="fmeta" id="fileMeta"></span><button type="button" class="fremove" id="removeBtn">✕ Remove</button></div>
+<p class="note" id="detectLine"></p>
+<div class="preview"><img id="previewImg" alt="Preview of your image"></div>
+<div class="controls">
+<div class="ctl"><label for="outFormat">Convert to</label><select id="outFormat"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option><option value="application/pdf">PDF</option><option value="image/svg+xml">SVG — traced drawing</option></select></div>
+<div class="ctl" id="qualityWrap"><label for="quality">Quality: <span class="val" id="qualityVal">92%</span></label><input type="range" id="quality" min="10" max="100" value="92"></div>
+<div class="ctl hidden" id="coloursWrap"><label for="colours">Colours: <span class="val" id="coloursVal">16</span></label><input type="range" id="colours" min="2" max="32" value="16"><p class="note">SVG output traces your picture — it redraws it as shapes. Fewer colours give a cleaner, simpler SVG; more keep more detail. Photos become flat, poster-style drawings.</p></div>
+<button class="btn" id="runBtn">Convert to JPG</button>
+</div>
+</div>
+<div class="result hidden" id="result" aria-live="polite"></div>
+</div></div>
 <div class="wrap" id="tools">
 <section class="cat" id="cat-convert"><h2>Convert</h2><p>Change an image from one format to another.</p><div class="grid"><a class="card" data-slug="jpg-to-png" href="jpg-to-png/"><span class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--accent3)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="13" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.6"/><path d="M3 17l4.5-4 3 3L14 12l2 2.5"/><path d="M19 8h5M22 5l3 3-3 3" transform="translate(-3 0)"/></svg></span><h3>JPG to PNG</h3><p>Turn a JPG photo into a PNG file.</p></a>
 <a class="card" data-slug="png-to-jpg" href="png-to-jpg/"><span class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--accent3)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="13" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.6"/><path d="M3 17l4.5-4 3 3L14 12l2 2.5"/><path d="M19 8h5M22 5l3 3-3 3" transform="translate(-3 0)"/></svg></span><h3>PNG to JPG</h3><p>Turn a PNG into a smaller JPG photo.</p></a>
@@ -136,5 +157,5 @@ if(document.readyState==="complete")idle();else window.addEventListener("load",i
 <div>Built by <a href="https://safwan.digital">Safwan.Digital</a></div>
 </div></footer>
 <script src="tools-data.js"></script>
-<script src="app.js?v=140"></script>
+<script src="app.js?v=150"></script>
 </body></html>

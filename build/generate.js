@@ -60,7 +60,7 @@ ${ogUrl}
 <link rel="icon" href="${P}favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="${P}favicon-32.png">
 <link rel="apple-touch-icon" href="${P}apple-touch-icon.png">
-<link rel="stylesheet" href="${P}styles.css?v=140">
+<link rel="stylesheet" href="${P}styles.css?v=150">
 <script>try{var _t=localStorage.getItem('imagestow-theme');if(_t==='dark'||(_t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.dataset.theme='dark'}catch(e){}</script>
 <script>
 /* Analytics: Google Analytics (G-JVKBLYBEDG) + Microsoft Clarity (zfqhjlmxb3), ImageStow's own properties — never PDFStow's IDs.
@@ -141,7 +141,7 @@ function footer(P) {
 <div>Built by <a href="https://safwan.digital">Safwan.Digital</a></div>
 </div></footer>
 <script src="${P}tools-data.js"></script>
-<script src="${P}app.js?v=140"></script>
+<script src="${P}app.js?v=150"></script>
 </body></html>`;
 }
 
@@ -234,7 +234,7 @@ function toolPage(t) {
 <body data-tool="${t.slug}">
 ${header(HPFX)}
 <main>
-<div class="tool-head"><span class="pill">Free · No sign-up · Nothing uploaded</span>
+<div class="tool-head">
 <h1>${t.name}</h1><p>${t.answer}</p></div>
 <div class="wrap"><div class="tool-shell">
 <div class="drop" id="dropZone" role="button" tabindex="0" aria-label="Choose an image">
@@ -269,15 +269,36 @@ function homePage() {
       `<a class="card" data-slug="${t.slug}" href="${t.slug}/"><span class="ic">${icon(t.icon)}</span><h3>${t.name}</h3><p>${t.desc}</p></a>`).join("\n");
     return `<section class="cat" id="cat-${c.id}"><h2>${c.name}</h2><p>${c.blurb}</p><div class="grid">${cards}</div></section>`;
   }).join("\n");
-  return head({ title: "ImageStow — Free Image Tools Online, Private by Design", meta: "Free image tools — compress, resize, convert, edit and clean images right in your browser. Private by design: files never leave your device. No sign-up.", url, ld }, "") + `
-<body>
+  return head({ title: "ImageStow — Free Image Tools Online, Private by Design", meta: "Free image tools — compress, resize, convert, edit and clean images right in your browser. Private by design: files never leave your device. No sign-up.", url, ld, cspEval: true }, "") + `
+<body data-tool="home-convert">
 ${header(HPFX)}
 <main>
-<div class="hero"><span class="pill">Free · No sign-up · Nothing uploaded</span>
+<div class="hero">
 <h1>Image tools that keep<br>your photos <em>yours.</em></h1>
 <p>Compress, resize, convert and edit images right in your browser. Your files are never uploaded — everything happens on your device.</p>
 <div class="search-wrap"><input type="search" id="toolSearch" placeholder="Search tools — try “shrink to 200kb” or “iphone photo”" aria-label="Search tools"><div class="search-results hidden" id="searchResults"></div></div>
 </div>
+<div class="wrap"><div class="tool-shell">
+<h2>Convert an image, right here</h2>
+<p class="note hc-sub">Add any image — the tool reads the file itself to work out what it really is, then makes the format you need. JPG, PNG, WebP, PDF, or an SVG traced from your picture.</p>
+<div class="drop" id="dropZone" role="button" tabindex="0" aria-label="Choose an image">
+<span class="big">Tap to choose an image, or drop it here</span>
+<span class="small">You can also paste an image (Ctrl+V), or drag one in from another tab. Your file stays on your device — it is never uploaded.</span>
+<input type="file" id="fileInput" accept="image/*,.heic,.heif">
+</div>
+<div class="work hidden" id="workArea">
+<div class="filebar"><span class="fname" id="fileName"></span><span class="fmeta" id="fileMeta"></span><button type="button" class="fremove" id="removeBtn">✕ Remove</button></div>
+<p class="note" id="detectLine"></p>
+<div class="preview"><img id="previewImg" alt="Preview of your image"></div>
+<div class="controls">
+<div class="ctl"><label for="outFormat">Convert to</label><select id="outFormat"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WebP</option><option value="application/pdf">PDF</option><option value="image/svg+xml">SVG — traced drawing</option></select></div>
+<div class="ctl" id="qualityWrap"><label for="quality">Quality: <span class="val" id="qualityVal">92%</span></label><input type="range" id="quality" min="10" max="100" value="92"></div>
+<div class="ctl hidden" id="coloursWrap"><label for="colours">Colours: <span class="val" id="coloursVal">16</span></label><input type="range" id="colours" min="2" max="32" value="16"><p class="note">SVG output traces your picture — it redraws it as shapes. Fewer colours give a cleaner, simpler SVG; more keep more detail. Photos become flat, poster-style drawings.</p></div>
+<button class="btn" id="runBtn">Convert to JPG</button>
+</div>
+</div>
+<div class="result hidden" id="result" aria-live="polite"></div>
+</div></div>
 <div class="wrap" id="tools">
 ${sections}
 <section class="copy flush"><h2>Why your photos stay private here</h2>
@@ -315,7 +336,7 @@ write("privacy/index.html", prosePage("privacy", "Privacy — How ImageStow Hand
 <p><strong>Your images are never uploaded.</strong> Every ImageStow tool runs inside your web browser, on your device. When you pick an image, your browser reads it, does the work in the page, and gives you the result to download. No copy of your image is sent to us or stored anywhere.</p>
 <h2>What does leave your device</h2>
 <p>Only program code, never your files:</p>
-<ul><li>The pages, design and tool code of this website itself.</li><li>On a few tools only, a well-known open-source library is loaded once so your browser can do the job: the HEIC reader (HEIC to JPG), the PDF maker (Images to PDF), the ZIP maker (Bulk Compress and Favicon Generator), and the image tracer (the Convert to SVG tools), which is part of this website itself. These libraries run on your device; they do not receive your images.</li></ul>
+<ul><li>The pages, design and tool code of this website itself.</li><li>On a few tools only, a well-known open-source library is loaded once so your browser can do the job: the HEIC reader (the HEIC tools and the homepage converter), the PDF maker (Images to PDF and the homepage converter), the ZIP maker (Bulk Compress and Favicon Generator), and the image tracer (the Convert to SVG tools and the homepage converter), which is part of this website itself. These libraries run on your device; they do not receive your images.</li></ul>
 <h2>What we store</h2>
 <p>One small setting on your device: your light/dark theme choice, kept in your browser's local storage. There are no accounts and no sign-ups, and we show no advertising. The visit counters below do set cookies of their own, run by Google and Microsoft.</p>
 <h2>Counting visits</h2>

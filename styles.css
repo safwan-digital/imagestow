@@ -125,3 +125,6 @@ footer.site a:hover{color:var(--ink)}
 .prose p,.prose li{color:var(--muted);line-height:1.7;font-size:var(--fs-4)}
 
 .filebar .fremove{margin-left:auto;background:var(--card-solid);border:1px solid var(--card-stroke);color:var(--ink);border-radius:var(--r-pill);padding:7px 14px;font-size:var(--fs-2);font-weight:600;cursor:pointer;min-height:36px}
+.tool-shell>h2{margin:0 0 6px;font-size:var(--fs-6);letter-spacing:-.01em}
+.tool-shell>.hc-sub{margin:0 0 16px}
+#detectLine{margin:0 0 10px;font-weight:600;color:var(--ink)}

@@ -234,7 +234,7 @@ function toolPage(t) {
 <body data-tool="${t.slug}">
 ${header(HPFX)}
 <main>
-<div class="tool-head">
+<div class="tool-head"><span class="pill">Free · No sign-up · Nothing uploaded</span>
 <h1>${t.name}</h1><p>${t.answer}</p></div>
 <div class="wrap"><div class="tool-shell">
 <div class="drop" id="dropZone" role="button" tabindex="0" aria-label="Choose an image">

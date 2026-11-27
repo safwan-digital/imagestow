@@ -11,6 +11,13 @@
 - [WebP to PNG](https://imagestow.com/webp-to-png/): Turn a WebP image into a PNG, keeping transparency.
 - [HEIC to JPG](https://imagestow.com/heic-to-jpg/): Open iPhone HEIC photos as normal JPGs.
 - [SVG to PNG](https://imagestow.com/svg-to-png/): Turn an SVG logo or icon into a PNG at any size.
+- [WebP to SVG](https://imagestow.com/webp-to-svg/): Turn a WebP image into an SVG vector file.
+- [PNG to SVG](https://imagestow.com/png-to-svg/): Turn a PNG image into an SVG vector file.
+- [JPG to SVG](https://imagestow.com/jpg-to-svg/): Turn a JPG photo into an SVG vector file.
+- [HEIC to SVG](https://imagestow.com/heic-to-svg/): Turn an iPhone HEIC photo into an SVG vector file.
+- [GIF to SVG](https://imagestow.com/gif-to-svg/): Turn a GIF image into an SVG vector file.
+- [BMP to SVG](https://imagestow.com/bmp-to-svg/): Turn a BMP image into an SVG vector file.
+- [AVIF to SVG](https://imagestow.com/avif-to-svg/): Turn an AVIF image into an SVG vector file.
 - [Images to PDF](https://imagestow.com/images-to-pdf/): Put several images into one PDF file.
 - [Compress Image](https://imagestow.com/compress-image/): Make an image file smaller, with a quality slider.
 - [Compress to a Target Size](https://imagestow.com/compress-to-size/): Shrink an image to under 200 KB, 100 KB, 50 KB or your size.

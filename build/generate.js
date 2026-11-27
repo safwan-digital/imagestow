@@ -60,7 +60,7 @@ ${ogUrl}
 <link rel="icon" href="${P}favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="${P}favicon-32.png">
 <link rel="apple-touch-icon" href="${P}apple-touch-icon.png">
-<link rel="stylesheet" href="${P}styles.css?v=133">
+<link rel="stylesheet" href="${P}styles.css?v=140">
 <script>try{var _t=localStorage.getItem('imagestow-theme');if(_t==='dark'||(_t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.dataset.theme='dark'}catch(e){}</script>
 <script>
 /* Analytics: Google Analytics (G-JVKBLYBEDG) + Microsoft Clarity (zfqhjlmxb3), ImageStow's own properties — never PDFStow's IDs.
@@ -141,7 +141,7 @@ function footer(P) {
 <div>Built by <a href="https://safwan.digital">Safwan.Digital</a></div>
 </div></footer>
 <script src="${P}tools-data.js"></script>
-<script src="${P}app.js?v=133"></script>
+<script src="${P}app.js?v=140"></script>
 </body></html>`;
 }
 
@@ -150,6 +150,10 @@ function qualityCtl(def) {
 }
 const CONTROLS = {
   convert: t => (t.q ? qualityCtl(92) : "") + `<button class="btn" id="runBtn">Convert to ${t.out.split("/")[1].toUpperCase() === "JPEG" ? "JPG" : t.out.split("/")[1].toUpperCase()}</button>`,
+  tosvg: t => `<div class="ctl"><label for="colours">Colours: <span class="val" id="coloursVal">16</span></label><input type="range" id="colours" min="2" max="32" value="16"></div>
+<p class="note">This tool traces your picture — it redraws it as shapes. Fewer colours give a cleaner, simpler SVG; more colours keep more detail. Logos, icons and flat graphics trace best; a photo becomes a flat, poster-style drawing. The tracing library loads once, only on this tool.</p>${t.slug === "heic-to-svg" ? `
+<p class="note">The HEIC reader library loads once, only on this tool. Large photos can take a few seconds.</p>` : ""}
+<button class="btn" id="runBtn">Convert to SVG</button>`,
   heic: () => qualityCtl(92) + `<button class="btn" id="runBtn">Convert to JPG</button><p class="note">The HEIC reader library loads once, only on this tool. Large photos can take a few seconds.</p>`,
   svg: () => `<div class="ctl-row"><div class="ctl"><label for="width">PNG width (px)</label><input type="number" id="width" min="16" max="8000" placeholder="1024"></div><div class="ctl"><label>Height</label><div id="heightOut" class="heightout">—</div></div></div>
 <div class="ctl"><label for="bg">Background</label><select id="bg"><option value="transparent">Transparent</option><option value="white">White</option></select></div>
@@ -226,7 +230,7 @@ function toolPage(t) {
     ? '<canvas id="stage" aria-label="Your image — work area"></canvas>'
     : t.ui === "bulk" || t.ui === "pdf" ? '<div class="thumbs" id="thumbs"></div>'
     : '<img id="previewImg" alt="Preview of your image">';
-  return head({ title: t.title, meta: t.meta, url, ld, cspEval: t.slug === "heic-to-jpg" }, "../") + `
+  return head({ title: t.title, meta: t.meta, url, ld, cspEval: t.slug === "heic-to-jpg" || t.slug === "heic-to-svg" }, "../") + `
 <body data-tool="${t.slug}">
 ${header(HPFX)}
 <main>
@@ -311,7 +315,7 @@ write("privacy/index.html", prosePage("privacy", "Privacy — How ImageStow Hand
 <p><strong>Your images are never uploaded.</strong> Every ImageStow tool runs inside your web browser, on your device. When you pick an image, your browser reads it, does the work in the page, and gives you the result to download. No copy of your image is sent to us or stored anywhere.</p>
 <h2>What does leave your device</h2>
 <p>Only program code, never your files:</p>
-<ul><li>The pages, design and tool code of this website itself.</li><li>On three tools only, a well-known open-source library is downloaded once so your browser can do the job: the HEIC reader (HEIC to JPG), the PDF maker (Images to PDF), and the ZIP maker (Bulk Compress and Favicon Generator). These libraries run on your device; they do not receive your images.</li></ul>
+<ul><li>The pages, design and tool code of this website itself.</li><li>On a few tools only, a well-known open-source library is loaded once so your browser can do the job: the HEIC reader (HEIC to JPG), the PDF maker (Images to PDF), the ZIP maker (Bulk Compress and Favicon Generator), and the image tracer (the Convert to SVG tools), which is part of this website itself. These libraries run on your device; they do not receive your images.</li></ul>
 <h2>What we store</h2>
 <p>One small setting on your device: your light/dark theme choice, kept in your browser's local storage. There are no accounts and no sign-ups, and we show no advertising. The visit counters below do set cookies of their own, run by Google and Microsoft.</p>
 <h2>Counting visits</h2>
@@ -329,7 +333,7 @@ write("about/index.html", prosePage("about", "About ImageStow — Free Image Too
 <p>ImageStow is a free set of image tools that runs entirely in your browser: compress, resize, convert, edit and clean up images without uploading them anywhere.</p>
 <p>It was built because the popular free tools all ask for the same thing — your photo, uploaded to their server, often with a batch limit or a sign-up wall. Your photos are personal. A picture of your ID, your product, your family should not need a trip to a stranger's server just to make it smaller.</p>
 <h2>What you can do here</h2>
-<p>There are 25 tools in four groups. Convert changes a picture from one format to another — including iPhone HEIC photos opened as normal JPGs, and a set of images packed into one PDF. Compress and Resize make a file smaller in weight or in pixels, down to an exact target size when a form demands one. Edit covers the everyday fixes: crop, rotate, a watermark with your own words, and blurring the parts a photo should not show. Privacy and Utility starts with the tools most people did not know they needed — seeing the hidden camera and location details inside a photo, and removing them before you share it.</p>
+<p>There are 32 tools in four groups. Convert changes a picture from one format to another — including iPhone HEIC photos opened as normal JPGs, a set of images packed into one PDF, and pictures traced into SVG vectors. Compress and Resize make a file smaller in weight or in pixels, down to an exact target size when a form demands one. Edit covers the everyday fixes: crop, rotate, a watermark with your own words, and blurring the parts a photo should not show. Privacy and Utility starts with the tools most people did not know they needed — seeing the hidden camera and location details inside a photo, and removing them before you share it.</p>
 <h2>How it works</h2>
 <p>There is no server doing the work. When you pick a file, your own browser reads it, the tool runs in the page, and the result comes back to you as a download. Close the tab and the picture is gone from the page's memory. That design has honest limits: a browser cannot read every rare file variant — a few kinds of HEIC photo are the known example — and very large files depend on how much memory your device has. When a tool here cannot do something, it says so plainly instead of pretending.</p>
 <h2>What is coming</h2>

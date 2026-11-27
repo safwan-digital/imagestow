@@ -1,9 +1,11 @@
 "use strict";
 /* ImageStow — all processing runs in this page. Files are never uploaded.
-   Lazy third-party libraries (pinned CDN, loaded only when a tool needs them):
-   - heic2any 0.0.4 (HEIC decode, heic-to-jpg only)
-   - pdf-lib 1.17.1 (images-to-pdf only)
-   - JSZip 3.10.1 (bulk-compress and favicon-generator ZIP downloads)
+   Lazy third-party libraries (loaded only when a tool needs them):
+   - heic2any 0.0.4 (HEIC decode, heic-to-jpg only) — pinned CDN
+   - pdf-lib 1.17.1 (images-to-pdf only) — pinned CDN
+   - JSZip 3.10.1 (bulk-compress and favicon-generator ZIP downloads) — pinned CDN
+   - ImageTracerJS 1.2.6 (raster → SVG tracing, the *-to-svg tools only) — vendored
+     on this site at vendor/imagetracer_v1.2.6.js (public domain, Unlicense)
    Analytics: Google Analytics (G-JVKBLYBEDG) + Microsoft Clarity (zfqhjlmxb3), ImageStow's own
    properties, wired in build/generate.js — they start after load + idle and only on
    imagestow.com / imagestow.safwan.digital / safwan-digital.github.io. Visits only; images are never sent. Do NOT reuse PDFStow IDs. */
@@ -58,6 +60,7 @@ function loadScriptOnce(src) {
     if (src.includes("heic2any")) return !!window.heic2any;
     if (src.includes("pdf-lib")) return !!window.PDFLib;
     if (src.includes("jszip")) return !!window.JSZip;
+    if (src.includes("imagetracer")) return !!window.ImageTracer;
     return true;
   }
 }
@@ -66,6 +69,13 @@ const CDN = {
   pdf: "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js",
   zip: "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"
 };
+/* Vendored libraries are served from this site itself. The path is worked out from
+   app.js's own address, so it resolves correctly from any tool page depth. */
+function localLib(file) {
+  const s = document.querySelector('script[src*="app.js"]');
+  const base = s ? (s.getAttribute("src") || "").replace(/app\.js(?:\?.*)?$/, "") : "";
+  return base + "vendor/" + file;
+}
 /* Subresource Integrity hashes (sha384) for the pinned CDN files above — verified against the live files 2026-11-18. */
 const SRI = {
   "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js": "sha384-OTofQ0MEeiSgh62havBcemCIK0gqj809wX6UA0uPISNMRnR6NZyCdGzX3SbLrgwL",
@@ -278,6 +288,28 @@ async function compressToTarget(img, targetBytes, type) {
   }
   const floor = await encodeAtScale(img, 0.1, type, 0.06);
   return { blob: floor, reached: floor.size <= targetBytes, quality: 0.06, scale: 0.1 };
+}
+
+/* ---------- raster → SVG tracing (ImageTracerJS, vendored) ---------- */
+/* Tracing works on a copy no bigger than TRACE_MAX on its long side: tracing a
+   full-size photo would take minutes and produce an enormous SVG. The tracer's
+   scale option then writes the SVG in the original's pixel coordinates, and SVG
+   scales cleanly anyway, so nothing about the result's size changes. */
+const TRACE_MAX = 1200;
+function traceImage(img, colours) {
+  const ow = img.naturalWidth, oh = img.naturalHeight;
+  const s = Math.min(1, TRACE_MAX / Math.max(ow, oh));
+  const w = Math.max(1, Math.round(ow * s)), h = Math.max(1, Math.round(oh * s));
+  const c = renderCanvas(img, w, h, { readPixels: true });
+  const imgd = c.getContext("2d", { willReadFrequently: true }).getImageData(0, 0, w, h);
+  return window.ImageTracer.imagedataToSVG(imgd, {
+    numberofcolors: colours,
+    colorsampling: 2,
+    colorquantcycles: 3,
+    pathomit: 8,
+    roundcoords: 1,
+    scale: s < 1 ? 1 / s : 1
+  });
 }
 
 /* ---------- shared page state + shell wiring ---------- */
@@ -545,6 +577,68 @@ function simpleConvert(outMime) {
   if (q && qv) q.addEventListener("input", () => qv.textContent = q.value + "%");
 }
 
+function traceConvert() {
+  wireShell(async files => {
+    if (SLUG === "heic-to-svg") {
+      /* Same pattern as heic-to-jpg: a browser cannot read HEIC on its own, so the
+         photo is decoded by the reader library when Convert is pressed, not on pick. */
+      state.img = null;
+      if (state.url) { URL.revokeObjectURL(state.url); state.url = null; }
+      const pv = $("#previewImg"); if (pv) pv.removeAttribute("src");
+      resultBox('<p class="note">HEIC file picked: <b>' + escapeHtml(files[0].name) + "</b> (" + fmtBytes(files[0].size) + '). Press the button to trace it.</p>');
+      return;
+    }
+    try { await loadPreview(files[0]); } catch (e) { showError(e.message); }
+  });
+  const cEl = $("#colours"), cv = $("#coloursVal");
+  if (cEl && cv) cEl.addEventListener("input", () => cv.textContent = cEl.value);
+  const btn = $("#runBtn");
+  if (btn) btn.addEventListener("click", async () => {
+    if (SLUG === "heic-to-svg" && !state.img) {
+      if (!state.files.length) return showError("Pick a HEIC photo first.");
+      busy(btn, true, "Loading HEIC reader…");
+      try {
+        await loadScriptOnce(CDN.heic);
+        if (!window.heic2any) throw new Error("The HEIC reader did not load.");
+        busy(btn, true, "Reading your HEIC photo… big photos can take a few seconds.");
+        let out = await window.heic2any({ blob: state.files[0], toType: "image/jpeg", quality: 0.92 });
+        if (Array.isArray(out)) out = out[0];
+        const got = await fileToImage(new File([out], "x.jpg", { type: "image/jpeg" }));
+        state.img = got.img; state.url = got.url;
+        const pv = $("#previewImg"); if (pv) pv.src = got.url;
+      } catch (err) {
+        busy(btn, false);
+        return showError("We could not read this HEIC photo in your browser. Some HEIC photos (like Live Photos) cannot be read here, or the extra code this tool needs did not download. Check your connection and try again, try a different photo, or save the photo as JPG in your phone's Photos app and use JPG to SVG instead.");
+      }
+    }
+    if (!state.img) return showError("Pick an image first.");
+    busy(btn, true, "Loading the tracing library…");
+    try {
+      await loadScriptOnce(localLib("imagetracer_v1.2.6.js"));
+      if (!window.ImageTracer) throw new Error("The tracing library did not load. Reload the page and try again.");
+      busy(btn, true, "Tracing… big pictures can take a few seconds.");
+      await new Promise(r => setTimeout(r, 40)); // let the busy label paint before the tracer takes the thread
+      const colours = Math.min(32, Math.max(2, Math.round(num("#colours", 16))));
+      const svg = traceImage(state.img, colours);
+      const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+      const paths = (svg.match(/<path/g) || []).length;
+      const name = outName(state.files[0], "", "svg");
+      const r = resultBox(statsHtml([["Before", fmtBytes(state.files[0].size)], ["SVG file", fmtBytes(blob.size)], ["Shapes drawn", String(paths)], ["Colours", String(colours)]]));
+      const pv = document.createElement("div"); pv.className = "preview";
+      const im = document.createElement("img");
+      im.alt = "Preview of your traced SVG";
+      im.src = URL.createObjectURL(blob);
+      pv.appendChild(im); r.appendChild(pv);
+      const note = document.createElement("p");
+      note.className = "note";
+      note.textContent = "The picture above is the SVG itself, shown as a preview. Download it to get the real vector file.";
+      r.appendChild(note);
+      r.appendChild(dlButton(blob, name));
+    } catch (e) { showError("We could not trace this image in your browser. Try a smaller image, or a simpler picture — a logo or flat graphic traces best."); }
+    busy(btn, false);
+  });
+}
+
 const IMPL = {
   /* ----- convert family ----- */
   "jpg-to-png": () => simpleConvert("image/png"),
@@ -553,6 +647,13 @@ const IMPL = {
   "png-to-webp": () => simpleConvert("image/webp"),
   "webp-to-jpg": () => simpleConvert("image/jpeg"),
   "webp-to-png": () => simpleConvert("image/png"),
+  "webp-to-svg": () => traceConvert(),
+  "png-to-svg": () => traceConvert(),
+  "jpg-to-svg": () => traceConvert(),
+  "heic-to-svg": () => traceConvert(),
+  "gif-to-svg": () => traceConvert(),
+  "bmp-to-svg": () => traceConvert(),
+  "avif-to-svg": () => traceConvert(),
 
   "heic-to-jpg": () => {
     wireShell(async files => {
@@ -1323,5 +1424,6 @@ if (SLUG && IMPL[SLUG]) {
 window.IS = {
   version: "1.0.0",
   parseJpegExif, stripJpegMetadata, readMetadata, metadataRows, hasHiddenMetadata,
-  loadImage, fileToImage, encodeImage, encodeAtScale, compressToTarget, canvasBlob, makeCanvas, fmtBytes
+  loadImage, fileToImage, encodeImage, encodeAtScale, compressToTarget, canvasBlob, makeCanvas, fmtBytes,
+  traceImage, localLib
 };

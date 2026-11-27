@@ -60,7 +60,7 @@ ${ogUrl}
 <link rel="icon" href="${P}favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="${P}favicon-32.png">
 <link rel="apple-touch-icon" href="${P}apple-touch-icon.png">
-<link rel="stylesheet" href="${P}styles.css?v=150">
+<link rel="stylesheet" href="${P}styles.css?v=151">
 <script>try{var _t=localStorage.getItem('imagestow-theme');if(_t==='dark'||(_t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.dataset.theme='dark'}catch(e){}</script>
 <script>
 /* Analytics: Google Analytics (G-JVKBLYBEDG) + Microsoft Clarity (zfqhjlmxb3), ImageStow's own properties — never PDFStow's IDs.
@@ -136,12 +136,12 @@ function renderGuide(g) {
 function footer(P) {
   const home = P === "" ? "./" : P;
   return `<footer class="site"><div class="wrap">
-<nav><a href="${home}">All tools</a><a href="${P}about/">About</a><a href="${P}privacy/">Privacy</a><a href="${P}terms/">Terms</a><a href="${P}contact/">Contact</a><a href="${P}sitemap.xml">Sitemap</a><a href="https://www.instagram.com/safwan.digital" target="_blank" rel="noopener">Instagram</a><a href="https://pdfstow.com/">PDFStow — free PDF tools</a></nav>
+<nav><a href="${home}">All tools</a><a href="${P}about/">About</a><a href="${P}privacy/">Privacy</a><a href="${P}terms/">Terms</a><a href="${P}contact/">Contact</a><a href="${P}sitemap.xml">Sitemap</a><a href="https://www.instagram.com/safwan.digital" target="_blank" rel="noopener">Instagram</a><a href="https://pdfstow.com/">PDFStow — free PDF tools</a><a href="https://chromewebstore.google.com/detail/lipoilendjgigeahiekkdldjdbdnngcf" target="_blank" rel="noopener">Chrome extension</a></nav>
 <div><strong>ImageStow</strong> — free image tools, private by design. Your files are processed in your browser and never uploaded.</div>
 <div>Built by <a href="https://safwan.digital">Safwan.Digital</a></div>
 </div></footer>
 <script src="${P}tools-data.js"></script>
-<script src="${P}app.js?v=150"></script>
+<script src="${P}app.js?v=151"></script>
 </body></html>`;
 }
 
@@ -299,6 +299,9 @@ ${header(HPFX)}
 </div>
 <div class="result hidden" id="result" aria-live="polite"></div>
 </div></div>
+<section class="copy"><h2>Take ImageStow into every tab</h2>
+<p>The free ImageStow extension for Chrome puts this converter in your browser: right-click any image on a page to convert or resize it on the spot — no new tab, and no upload. The work happens in your browser, exactly like here.</p>
+<p><a class="btn" href="https://chromewebstore.google.com/detail/lipoilendjgigeahiekkdldjdbdnngcf" target="_blank" rel="noopener">Get the free extension for Chrome</a></p></section>
 <div class="wrap" id="tools">
 ${sections}
 <section class="copy flush"><h2>Why your photos stay private here</h2>
